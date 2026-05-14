@@ -1,2 +1,0 @@
-# zopavo
-Creative

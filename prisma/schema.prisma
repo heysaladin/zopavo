@@ -1,0 +1,35 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Post {
+  id          String   @id @default(cuid())
+  title       String
+  platform    String   @default("INSTAGRAM") // INSTAGRAM | LINKEDIN | BOTH
+  caption     String
+  hashtags    String?
+  mediaPath   String?
+  scheduledAt DateTime?
+  status      String   @default("DRAFT") // DRAFT | SCHEDULED | READY | POSTED | ARCHIVED
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Template {
+  id               String   @id @default(cuid())
+  name             String
+  category         String
+  captionTemplate  String
+  hashtagsTemplate String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
