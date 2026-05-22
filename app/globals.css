@@ -4,26 +4,26 @@
 
 @layer base {
   :root {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 5.5%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 5.5%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 8%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 8%;
-    --muted-foreground: 0 0% 50%;
-    --accent: 0 0% 10%;
-    --accent-foreground: 0 0% 98%;
+    --background: 240 46% 7%;
+    --foreground: 0 0% 100%;
+    --card: 240 34% 12%;
+    --card-foreground: 0 0% 100%;
+    --popover: 240 34% 12%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 245 78% 61%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 30% 17%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 240 30% 17%;
+    --muted-foreground: 240 19% 62%;
+    --accent: 73 100% 50%;
+    --accent-foreground: 240 46% 7%;
     --destructive: 0 62.8% 40%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 10%;
-    --input: 0 0% 10%;
-    --ring: 0 0% 30%;
-    --radius: 0.5rem;
+    --border: 240 30% 17%;
+    --input: 240 30% 17%;
+    --ring: 245 78% 61%;
+    --radius: 0.75rem;
   }
 }
 
@@ -46,20 +46,20 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: hsl(0 0% 15%);
+    background: hsl(240 30% 22%);
     border-radius: 3px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: hsl(0 0% 20%);
+    background: hsl(240 30% 28%);
   }
 }
 
 @layer utilities {
   .glass {
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(91, 79, 233, 0.05);
     backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(91, 79, 233, 0.12);
   }
 
   .glass-hover {
@@ -67,7 +67,7 @@
   }
 
   .glass-hover:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(91, 79, 233, 0.08);
   }
 
   .text-gradient {

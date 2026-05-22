@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { Sidebar } from "@/components/layout/sidebar";
 import { ToastProvider } from "@/components/ui/toast-provider";
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
   title: "HyperFlow — Creator Posting Assistant",
@@ -10,8 +13,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark">
-      <body className="bg-[#0a0a0a] text-zinc-100 antialiased">
+    <html lang="en" className={`dark ${inter.variable}`}>
+      <body className="bg-background text-foreground antialiased font-sans">
         <div className="flex h-screen overflow-hidden">
           <Sidebar />
           <main className="flex-1 overflow-y-auto min-w-0">
