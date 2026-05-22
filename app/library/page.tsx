@@ -14,12 +14,12 @@ export default async function LibraryPage() {
     <div className="p-8">
       <div className="flex items-center justify-between mb-8 max-w-6xl mx-auto">
         <div>
-          <h1 className="text-2xl font-semibold text-zinc-100 tracking-tight">Library</h1>
-          <p className="text-sm text-zinc-500 mt-0.5">{posts.length} posts</p>
+          <h1 className="text-2xl font-semibold text-foreground tracking-tight">Library</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">{posts.length} posts</p>
         </div>
         <Link
           href="/library/new"
-          className="flex items-center gap-2 px-4 py-2 bg-violet-600 hover:bg-violet-500 text-white text-sm font-medium rounded-lg transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-medium rounded-md transition-colors"
         >
           <Plus className="w-4 h-4" />
           New Post

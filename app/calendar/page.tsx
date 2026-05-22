@@ -12,8 +12,8 @@ export default async function CalendarPage() {
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-zinc-100 tracking-tight">Calendar</h1>
-        <p className="text-sm text-zinc-500 mt-0.5">Your scheduled content at a glance</p>
+        <h1 className="text-2xl font-semibold text-foreground tracking-tight">Calendar</h1>
+        <p className="text-sm text-muted-foreground mt-0.5">Your scheduled content at a glance</p>
       </div>
       <CalendarClient posts={posts as any} />
     </div>

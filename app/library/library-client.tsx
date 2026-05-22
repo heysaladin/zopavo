@@ -43,34 +43,34 @@ export function LibraryClient({ initialPosts }: { initialPosts: Post[] }) {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search posts..."
-          className="px-3 py-1.5 bg-white/5 border border-white/8 rounded-lg text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-violet-500/50 focus:border-violet-500/30 w-52"
+          className="px-3 py-1.5 bg-background border border-border rounded-md text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring w-52 transition-colors"
         />
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1">
           {STATUS_FILTERS.map((s) => (
             <button
               key={s}
               onClick={() => setStatusFilter(s)}
               className={cn(
-                "px-2.5 py-1 rounded-lg text-xs font-medium transition-colors",
+                "px-2.5 py-1 rounded-md text-xs font-medium transition-colors",
                 statusFilter === s
-                  ? "bg-zinc-700 text-zinc-100"
-                  : "text-zinc-500 hover:text-zinc-300 hover:bg-white/5"
+                  ? "bg-accent text-accent-foreground"
+                  : "text-muted-foreground hover:text-foreground hover:bg-accent"
               )}
             >
               {s === "ALL" ? "All" : s.charAt(0) + s.slice(1).toLowerCase()}
             </button>
           ))}
         </div>
-        <div className="flex items-center gap-1.5 border-l border-white/8 pl-4">
+        <div className="flex items-center gap-1 border-l border-border pl-4">
           {PLATFORM_FILTERS.map((p) => (
             <button
               key={p}
               onClick={() => setPlatformFilter(p)}
               className={cn(
-                "px-2.5 py-1 rounded-lg text-xs font-medium transition-colors",
+                "px-2.5 py-1 rounded-md text-xs font-medium transition-colors",
                 platformFilter === p
-                  ? "bg-zinc-700 text-zinc-100"
-                  : "text-zinc-500 hover:text-zinc-300 hover:bg-white/5"
+                  ? "bg-accent text-accent-foreground"
+                  : "text-muted-foreground hover:text-foreground hover:bg-accent"
               )}
             >
               {p === "ALL" ? "All platforms" : p === "INSTAGRAM" ? "Instagram" : p === "LINKEDIN" ? "LinkedIn" : "Both"}
@@ -81,7 +81,7 @@ export function LibraryClient({ initialPosts }: { initialPosts: Post[] }) {
 
       {/* Grid */}
       {filtered.length === 0 ? (
-        <div className="text-center py-20 text-zinc-600">
+        <div className="text-center py-20 text-muted-foreground">
           <p className="text-sm">No posts found</p>
         </div>
       ) : (

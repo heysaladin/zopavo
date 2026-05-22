@@ -40,9 +40,9 @@ function CopyBtn({ label, onClick }: { label: string; onClick: () => void }) {
   return (
     <button
       onClick={handle}
-      className="flex items-center gap-1 px-2 py-1 rounded-md bg-white/5 border border-white/8 text-xs text-zinc-500 hover:text-zinc-300 hover:bg-white/8 transition-all"
+      className="flex items-center gap-1 px-2 py-1 rounded-md bg-background border border-border text-xs text-muted-foreground hover:text-foreground hover:bg-accent transition-all"
     >
-      {done ? <CheckCheck className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+      {done ? <CheckCheck className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
       {label}
     </button>
   );

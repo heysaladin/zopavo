@@ -9,8 +9,8 @@ export default async function TemplatesPage() {
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-zinc-100 tracking-tight">Templates</h1>
-        <p className="text-sm text-zinc-500 mt-0.5">Pre-built caption templates for your content</p>
+        <h1 className="text-2xl font-semibold text-foreground tracking-tight">Templates</h1>
+        <p className="text-sm text-muted-foreground mt-0.5">Pre-built caption templates for your content</p>
       </div>
       <TemplatesClient templates={templates as any} />
     </div>

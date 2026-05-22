@@ -13,16 +13,16 @@ export default async function ExecutePage({ params }: { params: { id: string } }
   return (
     <div className="p-8 max-w-2xl mx-auto">
       <div className="mb-8">
-        <Link href={`/library/${post.id}`} className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-zinc-300 transition-colors mb-5">
+        <Link href={`/library/${post.id}`} className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mb-5">
           <ChevronLeft className="w-3.5 h-3.5" /> Back to post
         </Link>
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-blue-500 flex items-center justify-center">
-            <Zap className="w-5 h-5 text-white" />
+          <div className="w-9 h-9 rounded-md bg-primary flex items-center justify-center">
+            <Zap className="w-5 h-5 text-primary-foreground" />
           </div>
           <div>
-            <h1 className="text-xl font-semibold text-zinc-100 tracking-tight">Execute Post</h1>
-            <p className="text-sm text-zinc-500">Follow the steps to publish your content</p>
+            <h1 className="text-xl font-semibold text-foreground tracking-tight">Execute Post</h1>
+            <p className="text-sm text-muted-foreground">Follow the steps to publish your content</p>
           </div>
         </div>
       </div>

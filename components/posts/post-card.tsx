@@ -56,12 +56,12 @@ export function PostCard({ post, onDelete }: { post: Post; onDelete?: (id: strin
 
   return (
     <div
-      className="group relative glass rounded-xl p-4 hover:bg-white/[0.04] transition-all duration-150 cursor-pointer"
+      className="group relative glass surface-hover rounded-lg p-4 transition-all duration-150 cursor-pointer"
       onClick={() => router.push(`/library/${post.id}`)}
     >
         {/* Header */}
         <div className="flex items-start justify-between gap-2 mb-3">
-          <h3 className="font-medium text-sm text-zinc-100 leading-snug line-clamp-1">
+          <h3 className="font-medium text-sm text-foreground leading-snug line-clamp-1">
             {post.title}
           </h3>
           <div className="flex items-center gap-1.5 shrink-0">
@@ -71,19 +71,19 @@ export function PostCard({ post, onDelete }: { post: Post; onDelete?: (id: strin
         </div>
 
         {/* Caption preview */}
-        <p className="text-xs text-zinc-500 leading-relaxed line-clamp-2 mb-3">
+        <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 mb-3">
           {truncate(post.caption, 140)}
         </p>
 
         {/* Footer */}
         <div className="flex items-center justify-between">
           {post.scheduledAt ? (
-            <div className="flex items-center gap-1.5 text-xs text-zinc-500">
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <Calendar className="w-3.5 h-3.5" />
               <span>{formatDate(post.scheduledAt)}</span>
             </div>
           ) : (
-            <span className="text-xs text-zinc-700">No date set</span>
+            <span className="text-xs text-muted-foreground/50">No date set</span>
           )}
 
           {post.status === "READY" && (
@@ -103,30 +103,30 @@ export function PostCard({ post, onDelete }: { post: Post; onDelete?: (id: strin
         <div className="relative">
           <button
             onClick={(e) => { e.preventDefault(); setMenuOpen(!menuOpen); }}
-            className="p-1.5 rounded-lg hover:bg-white/10 text-zinc-500 hover:text-zinc-300 transition-colors"
+            className="p-1.5 rounded-md hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
           >
             <MoreHorizontal className="w-3.5 h-3.5" />
           </button>
           {menuOpen && (
             <div
-              className="absolute right-0 top-7 w-40 bg-zinc-900 border border-white/10 rounded-xl shadow-2xl z-20 overflow-hidden"
+              className="absolute right-0 top-7 w-40 bg-popover border border-border rounded-lg shadow-lg z-20 overflow-hidden"
               onMouseLeave={() => setMenuOpen(false)}
             >
               <Link
                 href={`/library/${post.id}/edit`}
-                className="flex items-center gap-2.5 px-3 py-2 text-sm text-zinc-300 hover:bg-white/5 transition-colors"
+                className="flex items-center gap-2.5 px-3 py-2 text-sm text-popover-foreground hover:bg-accent transition-colors"
               >
                 <Pencil className="w-3.5 h-3.5" /> Edit
               </Link>
               <button
                 onClick={handleCopyCaption}
-                className="flex items-center gap-2.5 w-full px-3 py-2 text-sm text-zinc-300 hover:bg-white/5 transition-colors"
+                className="flex items-center gap-2.5 w-full px-3 py-2 text-sm text-popover-foreground hover:bg-accent transition-colors"
               >
                 <Copy className="w-3.5 h-3.5" /> Copy caption
               </button>
               <button
                 onClick={handleDuplicate}
-                className="flex items-center gap-2.5 w-full px-3 py-2 text-sm text-zinc-300 hover:bg-white/5 transition-colors"
+                className="flex items-center gap-2.5 w-full px-3 py-2 text-sm text-popover-foreground hover:bg-accent transition-colors"
               >
                 <Copy className="w-3.5 h-3.5" /> Duplicate
               </button>

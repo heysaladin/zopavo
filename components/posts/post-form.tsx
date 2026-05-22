@@ -24,6 +24,8 @@ interface PostFormProps {
 const platforms: Platform[] = ["INSTAGRAM", "LINKEDIN", "BOTH"];
 const statuses: PostStatus[] = ["DRAFT", "SCHEDULED", "READY", "POSTED", "ARCHIVED"];
 
+const inputClass = "w-full px-3 py-2.5 bg-background border border-border rounded-md text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring transition-colors";
+
 export function PostForm({ initialData, mode = "create" }: PostFormProps) {
   const router = useRouter();
   const { showToast } = useAppStore();
@@ -88,19 +90,19 @@ export function PostForm({ initialData, mode = "create" }: PostFormProps) {
     <form onSubmit={handleSubmit} className="space-y-5">
       {/* Title */}
       <div className="space-y-1.5">
-        <label className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Title</label>
+        <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Title</label>
         <input
           type="text"
           value={form.title}
           onChange={(e) => set("title", e.target.value)}
           placeholder="E.g. Product Launch Announcement"
-          className="w-full px-3 py-2.5 bg-white/5 border border-white/8 rounded-lg text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-violet-500/50 focus:border-violet-500/30 transition-colors"
+          className={inputClass}
         />
       </div>
 
       {/* Platform */}
       <div className="space-y-1.5">
-        <label className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Platform</label>
+        <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Platform</label>
         <div className="flex gap-2">
           {platforms.map((p) => (
             <button
@@ -108,10 +110,10 @@ export function PostForm({ initialData, mode = "create" }: PostFormProps) {
               type="button"
               onClick={() => set("platform", p)}
               className={cn(
-                "px-3 py-1.5 rounded-lg text-xs font-medium border transition-all",
+                "px-3 py-1.5 rounded-md text-xs font-medium border transition-all",
                 form.platform === p
-                  ? "bg-violet-500/20 border-violet-500/40 text-violet-300"
-                  : "bg-white/5 border-white/8 text-zinc-500 hover:text-zinc-300 hover:border-white/15"
+                  ? "bg-primary/10 border-primary/30 text-primary"
+                  : "bg-background border-border text-muted-foreground hover:text-foreground hover:border-border/80"
               )}
             >
               {p === "BOTH" ? "Both" : p === "INSTAGRAM" ? "Instagram" : "LinkedIn"}
@@ -122,59 +124,59 @@ export function PostForm({ initialData, mode = "create" }: PostFormProps) {
 
       {/* Caption */}
       <div className="space-y-1.5">
-        <label className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Caption</label>
+        <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Caption</label>
         <textarea
           value={form.caption}
           onChange={(e) => set("caption", e.target.value)}
           placeholder="Write your caption..."
           rows={6}
-          className="w-full px-3 py-2.5 bg-white/5 border border-white/8 rounded-lg text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-violet-500/50 focus:border-violet-500/30 transition-colors resize-none leading-relaxed"
+          className={cn(inputClass, "resize-none leading-relaxed")}
         />
-        <p className="text-xs text-zinc-600">{form.caption.length} characters</p>
+        <p className="text-xs text-muted-foreground/60">{form.caption.length} characters</p>
       </div>
 
       {/* Hashtags */}
       <div className="space-y-1.5">
-        <label className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Hashtags</label>
+        <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Hashtags</label>
         <input
           type="text"
           value={form.hashtags}
           onChange={(e) => set("hashtags", e.target.value)}
           placeholder="#design #creator #buildinpublic"
-          className="w-full px-3 py-2.5 bg-white/5 border border-white/8 rounded-lg text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-violet-500/50 focus:border-violet-500/30 transition-colors"
+          className={inputClass}
         />
       </div>
 
       {/* Media Path */}
       <div className="space-y-1.5">
-        <label className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Media Path</label>
+        <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Media Path</label>
         <input
           type="text"
           value={form.mediaPath}
           onChange={(e) => set("mediaPath", e.target.value)}
           placeholder="/Users/you/Desktop/post-image.jpg"
-          className="w-full px-3 py-2.5 bg-white/5 border border-white/8 rounded-lg text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-violet-500/50 focus:border-violet-500/30 transition-colors font-mono text-xs"
+          className={cn(inputClass, "font-mono text-xs")}
         />
       </div>
 
       {/* Scheduled Date */}
       <div className="space-y-1.5">
-        <label className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Scheduled Date</label>
+        <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Scheduled Date</label>
         <input
           type="datetime-local"
           value={form.scheduledAt}
           onChange={(e) => set("scheduledAt", e.target.value)}
-          className="w-full px-3 py-2.5 bg-white/5 border border-white/8 rounded-lg text-sm text-zinc-100 focus:outline-none focus:ring-1 focus:ring-violet-500/50 focus:border-violet-500/30 transition-colors [color-scheme:dark]"
+          className={inputClass}
         />
       </div>
 
       {/* Status */}
       <div className="space-y-1.5">
-        <label className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Status</label>
+        <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</label>
         <select
           value={form.status}
           onChange={(e) => set("status", e.target.value)}
-          className="w-full px-3 py-2.5 bg-white/5 border border-white/8 rounded-lg text-sm text-zinc-100 focus:outline-none focus:ring-1 focus:ring-violet-500/50 focus:border-violet-500/30 transition-colors [color-scheme:dark]"
+          className={inputClass}
         >
           {statuses.map((s) => (
             <option key={s} value={s}>{s.charAt(0) + s.slice(1).toLowerCase()}</option>
@@ -184,13 +186,13 @@ export function PostForm({ initialData, mode = "create" }: PostFormProps) {
 
       {/* Notes */}
       <div className="space-y-1.5">
-        <label className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Notes</label>
+        <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Notes</label>
         <textarea
           value={form.notes}
           onChange={(e) => set("notes", e.target.value)}
           placeholder="Internal notes..."
           rows={2}
-          className="w-full px-3 py-2.5 bg-white/5 border border-white/8 rounded-lg text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-violet-500/50 focus:border-violet-500/30 transition-colors resize-none"
+          className={cn(inputClass, "resize-none")}
         />
       </div>
 
@@ -199,14 +201,14 @@ export function PostForm({ initialData, mode = "create" }: PostFormProps) {
         <button
           type="submit"
           disabled={loading}
-          className="px-5 py-2.5 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors"
+          className="px-5 py-2.5 bg-primary hover:bg-primary/90 disabled:opacity-50 text-primary-foreground text-sm font-medium rounded-md transition-colors"
         >
           {loading ? "Saving..." : mode === "edit" ? "Update Post" : "Create Post"}
         </button>
         <button
           type="button"
           onClick={() => router.back()}
-          className="px-4 py-2.5 text-sm text-zinc-500 hover:text-zinc-300 transition-colors"
+          className="px-4 py-2.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           Cancel
         </button>
