@@ -36,6 +36,9 @@ interface AppState {
   // Sidebar
   sidebarCollapsed: boolean;
   toggleSidebar: () => void;
+  mobileMenuOpen: boolean;
+  toggleMobileMenu: () => void;
+  closeMobileMenu: () => void;
 
   // Toast notifications
   toast: { message: string; type: "success" | "error" | "info" } | null;
@@ -58,6 +61,9 @@ export const useAppStore = create<AppState>((set) => ({
 
   sidebarCollapsed: false,
   toggleSidebar: () => set((s) => ({ sidebarCollapsed: !s.sidebarCollapsed })),
+  mobileMenuOpen: false,
+  toggleMobileMenu: () => set((s) => ({ mobileMenuOpen: !s.mobileMenuOpen })),
+  closeMobileMenu: () => set({ mobileMenuOpen: false }),
 
   toast: null,
   showToast: (message, type = "info") => set({ toast: { message, type } }),

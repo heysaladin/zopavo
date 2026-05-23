@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { Sidebar } from "@/components/layout/sidebar";
+import { Sidebar, MobileHeader } from "@/components/layout/sidebar";
 import { ToastProvider } from "@/components/ui/toast-provider";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
-  title: "HyperFlow — Creator Posting Assistant",
-  description: "The calm, fast posting assistant for solo creators and designers.",
+  title: "Zopavo",
+  description: "End-to-end project management — from marketing to handover.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -19,7 +19,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           <div className="flex h-screen overflow-hidden">
             <Sidebar />
-            <main className="flex-1 overflow-y-auto min-w-0">
+            <main className="flex-1 overflow-y-auto min-w-0 h-full flex flex-col">
+              <MobileHeader />
               {children}
             </main>
           </div>

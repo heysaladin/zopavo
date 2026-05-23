@@ -1,12 +1,12 @@
 import { readPhaseDocs } from "@/lib/phase-docs";
 import { PhaseFileBrowser } from "@/components/docs/phase-file-browser";
 
-export default function TemplatesPage() {
-  const sections = readPhaseDocs("01-marketing");
+export default function InquiriesPage() {
+  const sections = readPhaseDocs("02-enquiry");
   return (
     <PhaseFileBrowser
-      title="Marketing"
-      subtitle="01 — Marketing"
+      title="Inquiries"
+      subtitle="02 — Enquiry"
       sections={sections}
     />
   );
