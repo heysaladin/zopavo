@@ -5,7 +5,7 @@ import MarkdownIt from "markdown-it";
 import type { DocSection } from "@/components/docs/phase-file-browser";
 
 const md = new MarkdownIt({ html: false, linkify: true, typographer: true });
-const BASE = "/Users/saladin/Documents/Claude/Projects/HYPERFANTASY/zopavo";
+const BASE = "/Users/saladin/Documents/Claude/Projects/HYPERFANTASY/000-LAB/zopavo";
 
 export function readSection(
   type: "templates" | "artifacts" | "reports" | "legal",

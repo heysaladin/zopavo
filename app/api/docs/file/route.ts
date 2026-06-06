@@ -5,7 +5,7 @@ import path from "path";
 import MarkdownIt from "markdown-it";
 
 const md = new MarkdownIt({ html: false, linkify: true, typographer: true });
-const DOCS_BASE = "/Users/saladin/Documents/Claude/Projects/HYPERFANTASY/zopavo";
+const DOCS_BASE = "/Users/saladin/Documents/Claude/Projects/HYPERFANTASY/000-LAB/zopavo";
 
 export async function GET(req: NextRequest) {
   const filePath = req.nextUrl.searchParams.get("path");

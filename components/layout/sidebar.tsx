@@ -22,6 +22,7 @@ import {
   PackageCheck,
   BookOpen,
   Menu,
+  Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/lib/store";
@@ -32,6 +33,7 @@ const phases = [
     items: [
       { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
       { href: "/docs", label: "Documents", icon: BookOpen },
+      { href: "/connections", label: "Projects", icon: Users },
     ],
   },
   {
@@ -44,7 +46,9 @@ const phases = [
   },
   {
     label: "Inquiry",
-    items: [{ href: "/inquiries", label: "Inquiries", icon: Inbox }],
+    items: [
+      { href: "/inquiries", label: "Inquiries", icon: Inbox },
+    ],
   },
   {
     label: "Deal",

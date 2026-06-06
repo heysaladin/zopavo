@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 
-const DOCS_BASE = "/Users/saladin/Documents/Claude/Projects/HYPERFANTASY/zopavo";
+const DOCS_BASE = "/Users/saladin/Documents/Claude/Projects/HYPERFANTASY/000-LAB/zopavo";
 
 export type FileNode = {
   name: string;
