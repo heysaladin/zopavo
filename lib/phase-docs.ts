@@ -5,7 +5,11 @@ import MarkdownIt from "markdown-it";
 import type { DocSection } from "@/components/docs/phase-file-browser";
 
 const md = new MarkdownIt({ html: false, linkify: true, typographer: true });
-const BASE = "/Users/saladin/Documents/Claude/Projects/HYPERFANTASY/000-LAB/zopavo";
+
+/** Root folder containing templates/, artifacts/, reports/ and legal/ phase docs. */
+export const DOCS_BASE =
+  process.env.ZOPAVO_DOCS_BASE ?? path.join(process.cwd(), "docs");
+const BASE = DOCS_BASE;
 
 export function readSection(
   type: "templates" | "artifacts" | "reports" | "legal",

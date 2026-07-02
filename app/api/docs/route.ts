@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
-
-const DOCS_BASE = "/Users/saladin/Documents/Claude/Projects/HYPERFANTASY/000-LAB/zopavo";
+import { DOCS_BASE } from "@/lib/phase-docs";
 
 export type FileNode = {
   name: string;

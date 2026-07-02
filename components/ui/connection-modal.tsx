@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { PIPELINE_STEPS, stepNum } from "@/lib/pipeline";
 
 type Connection = {
   id: string;
@@ -24,16 +25,10 @@ type Props = {
 };
 
 const CHANNELS = ["instagram", "linkedin", "whatsapp", "email", "referral", "cold"];
-const STATUSES = [
-  { value: "MARKETING",   label: "Marketing" },
-  { value: "ENQUIRY",     label: "Enquiry" },
-  { value: "DEAL",        label: "Deal" },
-  { value: "PROJECT",     label: "Project" },
-  { value: "APPROVAL",    label: "Approval" },
-  { value: "DEVELOPMENT", label: "Development" },
-  { value: "QC",          label: "QC" },
-  { value: "HANDOVER",    label: "Handover" },
-];
+const STATUSES = PIPELINE_STEPS.map((s) => ({
+  value: s.id,
+  label: `${stepNum(s.num)} — ${s.label}`,
+}));
 
 export default function ConnectionModal({ connection, onClose, onSaved }: Props) {
   const [form, setForm] = useState({

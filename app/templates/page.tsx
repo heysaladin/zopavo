@@ -2,12 +2,5 @@ import { readPhaseDocs } from "@/lib/phase-docs";
 import { PhaseFileBrowser } from "@/components/docs/phase-file-browser";
 
 export default function TemplatesPage() {
-  const sections = readPhaseDocs("01-marketing");
-  return (
-    <PhaseFileBrowser
-      title="Marketing"
-      subtitle="01 — Marketing"
-      sections={sections}
-    />
-  );
+  return <PhaseFileBrowser stepId="MARKETING" sections={readPhaseDocs("01-marketing")} />;
 }

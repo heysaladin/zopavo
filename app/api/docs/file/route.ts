@@ -3,9 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 import MarkdownIt from "markdown-it";
+import { DOCS_BASE } from "@/lib/phase-docs";
 
 const md = new MarkdownIt({ html: false, linkify: true, typographer: true });
-const DOCS_BASE = "/Users/saladin/Documents/Claude/Projects/HYPERFANTASY/000-LAB/zopavo";
 
 export async function GET(req: NextRequest) {
   const filePath = req.nextUrl.searchParams.get("path");

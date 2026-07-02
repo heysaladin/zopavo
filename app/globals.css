@@ -212,6 +212,12 @@
     background: var(--accent);
   }
 
+  /* Legacy alias for card surfaces */
+  .glass {
+    background: var(--card);
+    border: 1px solid var(--border);
+  }
+
   /* Markdown preview */
   .docs-prose h1 { @apply text-xl font-bold text-foreground mb-4 mt-6 first:mt-0; }
   .docs-prose h2 { @apply text-base font-semibold text-foreground mb-3 mt-6 pb-2 border-b border-border; }
