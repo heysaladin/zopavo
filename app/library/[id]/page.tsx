@@ -10,7 +10,12 @@ import type { Platform, PostStatus } from "@/lib/utils";
 export const dynamic = "force-dynamic";
 
 export default async function PostDetailPage({ params }: { params: { id: string } }) {
-  const post = await db.post.findUnique({ where: { id: params.id } });
+  let post: Awaited<ReturnType<typeof db.post.findUnique>> = null;
+  try {
+    post = await db.post.findUnique({ where: { id: params.id } });
+  } catch {
+    // database unreachable
+  }
   if (!post) notFound();
 
   return (

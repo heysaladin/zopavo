@@ -4,10 +4,15 @@ import { CalendarClient } from "./calendar-client";
 export const dynamic = "force-dynamic";
 
 export default async function CalendarPage() {
-  const posts = await db.post.findMany({
-    where: { scheduledAt: { not: null } },
-    orderBy: { scheduledAt: "asc" },
-  });
+  let posts: Awaited<ReturnType<typeof db.post.findMany>> = [];
+  try {
+    posts = await db.post.findMany({
+      where: { scheduledAt: { not: null } },
+      orderBy: { scheduledAt: "asc" },
+    });
+  } catch {
+    // database unreachable
+  }
 
   return (
     <div className="p-8">

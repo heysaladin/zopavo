@@ -134,7 +134,7 @@ export function DocsClient() {
     fetch("/api/docs")
       .then((r) => r.json())
       .then((data) => {
-        setTree(data);
+        setTree(Array.isArray(data) ? data : []);
         setTreeLoading(false);
       });
   }, []);

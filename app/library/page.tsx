@@ -6,9 +6,14 @@ import { LibraryClient } from "./library-client";
 export const dynamic = "force-dynamic";
 
 export default async function LibraryPage() {
-  const posts = await db.post.findMany({
-    orderBy: [{ scheduledAt: "asc" }, { createdAt: "desc" }],
-  });
+  let posts: Awaited<ReturnType<typeof db.post.findMany>> = [];
+  try {
+    posts = await db.post.findMany({
+      orderBy: [{ scheduledAt: "asc" }, { createdAt: "desc" }],
+    });
+  } catch {
+    // database unreachable
+  }
 
   return (
     <div className="p-8">
