@@ -1,5 +1,7 @@
 import "server-only";
 import { NextRequest, NextResponse } from "next/server";
+
+export const dynamic = "force-dynamic";
 import fs from "fs";
 import path from "path";
 import MarkdownIt from "markdown-it";

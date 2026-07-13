@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import fs from "fs";
+
+export const dynamic = "force-dynamic";
 import path from "path";
 import { DOCS_BASE } from "@/lib/phase-docs";
 

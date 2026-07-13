@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
   const post = await db.post.findUnique({ where: { id: params.id } });
   if (!post) return NextResponse.json({ error: "Not found" }, { status: 404 });
