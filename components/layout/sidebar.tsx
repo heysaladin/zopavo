@@ -6,9 +6,6 @@ import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import {
   LayoutDashboard,
-  Library,
-  CalendarDays,
-  FileText,
   ChevronLeft,
   Sun,
   Moon,
@@ -23,13 +20,6 @@ import { PIPELINE_STEPS, stepNum } from "@/lib/pipeline";
 const workspaceItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/docs", label: "Documents", icon: BookOpen },
-];
-
-// Marketing (step 01) tools, shown nested under the first pipeline step
-const marketingTools = [
-  { href: "/library", label: "Library", icon: Library },
-  { href: "/calendar", label: "Calendar", icon: CalendarDays },
-  { href: "/templates", label: "Templates", icon: FileText },
 ];
 
 const marketingRoutes = ["/library", "/calendar", "/templates"];
@@ -62,15 +52,26 @@ export function Sidebar() {
 
   const isDark = theme === "dark";
 
-  const isActive = (href: string) =>
-    pathname === href || pathname.startsWith(href + "/");
+  const isActive = (href: string) => {
+    // Strip query string for base path comparison
+    const basePath = href.split("?")[0];
+    return pathname === basePath || pathname.startsWith(basePath + "/");
+  };
+
+  // For pipeline step links that include query params, check pathname + query
+  const isStepActive = (href: string) => {
+    const [basePath, query] = href.split("?");
+    if (!query) return pathname === basePath || pathname.startsWith(basePath + "/");
+    // For query-param links (e.g. /deliverables?stage=APPROVAL), just match the base path for now
+    return pathname === basePath || pathname.startsWith(basePath + "/");
+  };
 
   // Which pipeline step is currently active (for the rail highlight)
   const activeStepNum =
     PIPELINE_STEPS.find((s) =>
       s.id === "MARKETING"
         ? marketingRoutes.some((r) => isActive(r))
-        : isActive(s.href)
+        : isStepActive(s.href)
     )?.num ?? null;
 
   return (
@@ -155,7 +156,6 @@ export function Sidebar() {
               {PIPELINE_STEPS.map((step) => {
                 const Icon = step.icon;
                 const active = activeStepNum === step.num;
-                const isMarketing = step.id === "MARKETING";
                 return (
                   <div key={step.id}>
                     <Link
@@ -194,29 +194,6 @@ export function Sidebar() {
                       )}
                     </Link>
 
-                    {/* Marketing tools nested under step 01 */}
-                    {isMarketing && !sidebarCollapsed && (
-                      <div className="space-y-px">
-                        {marketingTools.map(({ href, label, icon: ToolIcon }) => {
-                          const toolActive = isActive(href);
-                          return (
-                            <Link
-                              key={href}
-                              href={href}
-                              className={cn(
-                                "relative z-10 flex items-center gap-2.5 ml-[34px] mr-1 px-2 py-1.5 rounded-md text-[13px] transition-colors duration-100",
-                                toolActive
-                                  ? "bg-accent text-accent-foreground font-medium"
-                                  : "text-muted-foreground/80 hover:text-sidebar-foreground hover:bg-accent"
-                              )}
-                            >
-                              <ToolIcon className="w-3.5 h-3.5 shrink-0" />
-                              <span className="whitespace-nowrap">{label}</span>
-                            </Link>
-                          );
-                        })}
-                      </div>
-                    )}
                   </div>
                 );
               })}

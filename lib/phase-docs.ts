@@ -8,7 +8,7 @@ const md = new MarkdownIt({ html: false, linkify: true, typographer: true });
 
 /** Root folder containing templates/, artifacts/, reports/ and legal/ phase docs. */
 export const DOCS_BASE =
-  process.env.ZOPAVO_DOCS_BASE ?? path.join(process.cwd(), "docs");
+  process.env.ZOPAVO_DOCS_BASE ?? path.join(process.cwd(), "data");
 const BASE = DOCS_BASE;
 
 export function readSection(

@@ -1,5 +1,4 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// Zopavo — data model for Hyperfantasy's 8-stage studio workflow
 
 generator client {
   provider = "prisma-client-js"
@@ -11,18 +10,272 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+enum SubUnit {
+  HIKARI
+  DRAVENCLAW
+  THINKSOFT
+  MITAYANI
+}
+
+enum LeadSource {
+  REFERRAL
+  PORTFOLIO
+  INSTAGRAM
+  X
+  OUTREACH
+  WEBSITE_FORM
+  REPEAT_CLIENT
+  OTHER
+}
+
+model Client {
+  id        String    @id @default(cuid())
+  name      String
+  company   String?
+  timezone  String?
+  contacts  Contact[]
+  enquiries Enquiry[]
+  deals     Deal[]
+  projects  Project[]
+  createdAt DateTime  @default(now())
+}
+
+model Contact {
+  id        String  @id @default(cuid())
+  client    Client  @relation(fields: [clientId], references: [id])
+  clientId  String
+  name      String
+  email     String?
+  role      String?
+  isPrimary Boolean @default(false)
+}
+
+enum EnquiryStatus {
+  NEW
+  REPLIED
+  QUALIFIED
+  CLOSED
+}
+
+model Enquiry {
+  id             String        @id @default(cuid())
+  client         Client?       @relation(fields: [clientId], references: [id])
+  clientId       String?
+  contactName    String
+  contactEmail   String?
+  needSummary    String
+  source         LeadSource
+  status         EnquiryStatus @default(NEW)
+  firstRepliedAt DateTime?
+  qualifiedAt    DateTime?
+  closedReason   String?
+  deal           Deal?
+  createdAt      DateTime      @default(now())
+}
+
+enum DealOutcome {
+  OPEN
+  WON
+  LOST
+}
+
+enum LostReason {
+  PRICE
+  TIMELINE
+  SCOPE
+  COMPETITOR
+  GHOSTED
+  OTHER
+}
+
+model Deal {
+  id                   String      @id @default(cuid())
+  enquiry              Enquiry     @relation(fields: [enquiryId], references: [id])
+  enquiryId            String      @unique
+  client               Client      @relation(fields: [clientId], references: [id])
+  clientId             String
+  scopeSummary         String
+  value                Decimal?    @db.Decimal(14, 2)
+  currency             String      @default("IDR")
+  expectedCloseDate    DateTime?
+  outcome              DealOutcome @default(OPEN)
+  lostReason           LostReason?
+  agreedRevisionRounds Int         @default(2)
+  agreement            Agreement?
+  project              Project?
+  createdAt            DateTime    @default(now())
+  closedAt             DateTime?
+}
+
+model Agreement {
+  id          String    @id @default(cuid())
+  deal        Deal      @relation(fields: [dealId], references: [id])
+  dealId      String    @unique
+  kind        String
+  documentUrl String?
+  signedAt    DateTime?
+}
+
+enum ProjectStatus {
+  ACTIVE
+  DONE
+}
+
+model Project {
+  id           String        @id @default(cuid())
+  deal         Deal          @relation(fields: [dealId], references: [id])
+  dealId       String        @unique
+  client       Client        @relation(fields: [clientId], references: [id])
+  clientId     String
+  name         String
+  status       ProjectStatus @default(ACTIVE)
+  planAgreedAt DateTime?
+  planUrl      String?
+  milestones   Milestone[]
+  deliverables Deliverable[]
+  stageEvents  StageEvent[]
+  createdAt    DateTime      @default(now())
+  closedAt     DateTime?
+}
+
+model Milestone {
+  id        String    @id @default(cuid())
+  project   Project   @relation(fields: [projectId], references: [id])
+  projectId String
+  title     String
+  dueDate   DateTime?
+  reachedAt DateTime?
+}
+
+enum DeliverableType {
+  BRANDING
+  ILLUSTRATION
+  GRAPHIC
+  WEB_APP
+}
+
+enum DeliverableStage {
+  DESIGN
+  APPROVAL
+  DEVELOPMENT
+  QC
+  HANDOVER
+  DONE
+}
+
+model Deliverable {
+  id          String           @id @default(cuid())
+  project     Project          @relation(fields: [projectId], references: [id])
+  projectId   String
+  name        String
+  type        DeliverableType
+  subUnit     SubUnit
+  stage       DeliverableStage @default(DESIGN)
+  progress    Int              @default(0)
+  tasks       Task[]
+  approvals   Approval[]
+  issues      Issue[]
+  assets      Asset[]
+  handover    Handover?
+  stageEvents StageEvent[]
+  createdAt   DateTime         @default(now())
+}
+
+model Task {
+  id            String           @id @default(cuid())
+  deliverable   Deliverable      @relation(fields: [deliverableId], references: [id])
+  deliverableId String
+  title         String
+  done          Boolean          @default(false)
+  stage         DeliverableStage
+}
+
+enum ApprovalDecision {
+  PENDING
+  APPROVED
+  CHANGES_REQUESTED
+}
+
+model Approval {
+  id            String           @id @default(cuid())
+  deliverable   Deliverable      @relation(fields: [deliverableId], references: [id])
+  deliverableId String
+  revisionRound Int
+  version       String
+  decision      ApprovalDecision @default(PENDING)
+  signedOffBy   String?
+  signedOffAt   DateTime?
+  feedback      String?
+  createdAt     DateTime         @default(now())
+}
+
+enum IssueStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  ACCEPTED
+}
+
+model Issue {
+  id            String      @id @default(cuid())
+  deliverable   Deliverable @relation(fields: [deliverableId], references: [id])
+  deliverableId String
+  title         String
+  blocking      Boolean     @default(true)
+  status        IssueStatus @default(OPEN)
+  createdAt     DateTime    @default(now())
+  resolvedAt    DateTime?
+}
+
+model Handover {
+  id                 String      @id @default(cuid())
+  deliverable        Deliverable @relation(fields: [deliverableId], references: [id])
+  deliverableId      String      @unique
+  checklistPassed    Boolean     @default(false)
+  filesTransferred   Boolean     @default(false)
+  credentialsPassed  Boolean     @default(false)
+  acceptanceSignedBy String?
+  acceptanceSignedAt DateTime?
+  warrantyUntil      DateTime?
+}
+
+model Asset {
+  id            String      @id @default(cuid())
+  deliverable   Deliverable @relation(fields: [deliverableId], references: [id])
+  deliverableId String
+  label         String
+  version       String
+  url           String
+  isLatest      Boolean     @default(true)
+  createdAt     DateTime    @default(now())
+}
+
+model StageEvent {
+  id            String       @id @default(cuid())
+  project       Project?     @relation(fields: [projectId], references: [id])
+  projectId     String?
+  deliverable   Deliverable? @relation(fields: [deliverableId], references: [id])
+  deliverableId String?
+  fromStage     String?
+  toStage       String
+  reason        String?
+  actor         String
+  createdAt     DateTime     @default(now())
+}
+
+// ── Existing content-scheduling models (unchanged) ──
 model Post {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   title       String
-  platform    String   @default("INSTAGRAM") // INSTAGRAM | LINKEDIN | BOTH
+  platform    String    @default("INSTAGRAM")
   caption     String
   hashtags    String?
   mediaPath   String?
   scheduledAt DateTime?
-  status      String   @default("DRAFT") // DRAFT | SCHEDULED | READY | POSTED | ARCHIVED
+  status      String    @default("DRAFT")
   notes       String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model Template {
@@ -33,19 +286,4 @@ model Template {
   hashtagsTemplate String?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
-}
-
-model Connection {
-  id          String    @id @default(cuid())
-  name        String
-  company     String?
-  email       String?
-  phone       String?
-  channel     String?   // instagram | linkedin | whatsapp | email | referral | cold
-  status      String    @default("PROSPECT") // PROSPECT | LEAD | CLIENT | INACTIVE
-  notes       String?
-  tags        String?
-  lastContact DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
 }
