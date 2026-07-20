@@ -1,116 +1,90 @@
-# Change Order Template
+# CHANGE ORDER
 
-**Hyperfantasy Studio | Legal Document**
-**Owner:** Dita + Legal Bot
+**Hyperfantasy | Legal Document**
 **Phase:** 4 — Production
 **Document ref:** [CO-YYYY-XXX]
 
 ---
 
-# CHANGE ORDER / ADENDUM PERUBAHAN LINGKUP
-
-**Nomor / Ref:** [CO-YYYY-XXX]
-**Tanggal / Date:** [DD/MM/YYYY]
-**Proyek / Project:** [PROJECT NAME]
-**Contract ref:** [CONTRACT-YYYY-XXX]
+**Ref:** [CO-YYYY-XXX]
+**Date:** [DD/MM/YYYY]
+**Original Contract:** [CONTRACT-YYYY-XXX] dated [DD/MM/YYYY]
 
 ---
 
-## PARA PIHAK / PARTIES
+## PARTIES
 
-| | Detail |
-|---|---|
-| Studio | Hyperfantasy Studio — [Dita/Adin] |
-| Client | [Client name] — [Company] |
+**Service Provider:** Hyperfantasy Studio — [Name], Director
 
----
-
-## 1. LATAR BELAKANG / BACKGROUND
-
-This Change Order amends the original Scope of Work (Ref: [SOW-YYYY-XXX]) dated [DD/MM/YYYY].
-
-**Reason for change:**
-> [Brief explanation — e.g. Client requested additional pages beyond original 5-page scope / Client changed brand name requiring redesign of finalised logo]
+**Client:** [Client full name] — [Company], [Role]
 
 ---
 
-## 2. PERUBAHAN YANG DISEPAKATI / AGREED CHANGES
+## 1. REASON FOR CHANGE
 
-### Penambahan Lingkup / Scope Addition
-
-| # | Tambahan / Addition | Detail |
-|---|---|---|
-| 1 | [e.g. 2 additional website pages] | [e.g. Team page + FAQ page, matching existing design system] |
-| 2 | [e.g. Animated logo version] | [e.g. 5-second sting for video use] |
-| 3 | | |
-
-### Pengurangan Lingkup / Scope Reduction (if any)
-
-| # | Dikurangi / Removed | Detail |
-|---|---|---|
-| 1 | [e.g. E-commerce functionality removed] | [e.g. Client decided to launch without shop initially] |
+[Describe what changed and why — e.g. Client requested an additional feature (dark mode) not included in the original SOW.]
 
 ---
 
-## 3. DAMPAK BIAYA / COST IMPACT
+## 2. CHANGES TO SCOPE OF WORK
+
+| # | Original Scope | Change | New Scope |
+|---|---|---|---|
+| 1 | [Original item] | [Added / Removed / Modified] | [New description] |
+| 2 | [Original item] | [Added / Removed / Modified] | [New description] |
+
+---
+
+## 3. IMPACT ON FEES
 
 | Item | Amount (IDR) |
 |---|---|
-| Original contract value | [X] |
-| Addition: [Item 1] | +[X] |
-| Addition: [Item 2] | +[X] |
-| Reduction: [Item] | -[X] |
-| **Revised total** | **[TOTAL]** |
+| [New deliverable / extra work] | [X] |
+| [Additional revision rounds] | [X] |
+| **Total additional fee** | **[TOTAL]** |
 
-**Additional amount due:** IDR [X]
+**Revised project total:** IDR [ORIGINAL TOTAL] + IDR [ADDITIONAL] = **IDR [NEW TOTAL]**
+
+**Additional payment due:** [DD/MM/YYYY] or upon signing this Change Order.
 
 ---
 
-## 4. JADWAL PEMBAYARAN TAMBAHAN / ADDITIONAL PAYMENT SCHEDULE
+## 4. IMPACT ON TIMELINE
 
-| Payment | Amount | Due |
+| Milestone | Original Date | Revised Date |
 |---|---|---|
-| [e.g. Upon signing this CO] | IDR [X] | [DATE] |
-| [e.g. On delivery of additional pages] | IDR [X] | [DATE] |
+| [Phase / Deliverable] | [DATE] | [DATE] |
+| Final handover | [DATE] | [DATE] |
+
+**Timeline extended by:** [X] working days.
 
 ---
 
-## 5. DAMPAK TIMELINE / TIMELINE IMPACT
+## 5. TERMS
 
-| | Before CO | After CO |
-|---|---|---|
-| Final delivery | [DATE] | [DATE] |
-| Timeline extension | — | +[X] weeks |
-
-**Reason for extension:** [e.g. Additional 2 pages require [X] extra days of design + development]
+- This Change Order supplements and forms part of the original Contract ([CONTRACT-YYYY-XXX]).
+- Work on the changes will begin upon signing and receipt of any additional payment due.
+- All other terms of the original Contract remain unchanged.
 
 ---
 
-## 6. KETENTUAN LAINNYA / OTHER TERMS
-
-- All other terms of the original contract remain unchanged
-- This Change Order becomes effective upon signature by both parties
-- Work on the added scope begins only after this CO is signed and any additional payment received
-
----
-
-## 7. TANDA TANGAN / SIGNATURES
+## SIGNATURES
 
 **Hyperfantasy Studio**
 
-Tanda tangan: _______________________
-Nama: [Dita / Adin]
-Tanggal: [DD/MM/YYYY]
+Signature: _______________________
+Name: [Name]
+Date: [DD/MM/YYYY]
 
 ---
 
-**Klien / Client**
+**Client**
 
-Tanda tangan: _______________________
-Nama: [Client name]
-Perusahaan: [Company]
-Tanggal: [DD/MM/YYYY]
+Signature: _______________________
+Name: [Client full name]
+Company: [Company]
+Date: [DD/MM/YYYY]
 
 ---
 
-*Change Order ref: [CO-YYYY-XXX] | Project: [PROJ-YYYY-XXX] | Hyperfantasy Studio*
+*Change Order ref: [CO-YYYY-XXX] | Contract ref: [CONTRACT-YYYY-XXX]*

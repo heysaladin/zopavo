@@ -1,4 +1,4 @@
-# PERJANJIAN KERAHASIAAN PENGEMBANGAN DESAIN PERANGKAT LUNAK / HALAMAN WEB
+# NON-DISCLOSURE AGREEMENT
 
 **Hyperfantasy | Legal Document**
 **Phase:** 3 — Deal
@@ -6,134 +6,128 @@
 
 ---
 
-<!-- INSTRUKSI: Ganti semua [BRACKET]. Hapus komentar ini sebelum dikirim. -->
+This Non-Disclosure Agreement ("Agreement") is effective as of [DAY], [DD/MM/YYYY], regardless of the date of signing, by and between:
 
-Perjanjian Kerahasiaan (Non-Disclosure Agreement) Pengembangan Perangkat Lunak / Halaman Web ini, selanjutnya disebut sebagai "Perjanjian", berlaku efektif terhitung sejak hari [HARI], tanggal [TANGGAL] bulan [BULAN] tahun [TAHUN] terlepas dari tanggal penandatanganannya, oleh dan antara:
+- **[CLIENT COMPANY NAME]**, represented by **[REPRESENTATIVE NAME]**, hereinafter referred to as "Party A";
+- **[CONTRACTOR FULL NAME]** (ID No.: [ID NUMBER], Address: [FULL ADDRESS]), hereinafter referred to as "Party B".
 
-- **[NAMA PERUSAHAAN / CLIENT]**, diwakili oleh **[NAMA PERWAKILAN]**, selanjutnya disebut sebagai "Pihak Pertama";
-- **[NAMA LENGKAP KONTRAKTOR]** (No. KTP: [NOMOR KTP], Alamat: [ALAMAT LENGKAP]), selanjutnya disebut sebagai "Pihak Kedua".
+Party A and Party B are hereinafter collectively referred to as "the Parties".
 
-Pihak Pertama dan Pihak Kedua secara bersama-sama disebut sebagai "Para Pihak".
+This Agreement is made to prevent unauthorized disclosure of confidential and proprietary information related to [PROJECT DESCRIPTION, e.g. the development of Software / Web Design for [SYSTEM NAME]], hereinafter referred to as "the Software".
 
-Perjanjian ini dibuat dengan tujuan untuk mencegah pengungkapan tanpa izin terhadap informasi rahasia dan kepemilikan yang berkaitan dengan pengembangan [DESKRIPSI PROYEK, misal: Desain Perangkat Lunak / Halaman Web untuk keperluan [NAMA SISTEM]], selanjutnya disebut sebagai "Perangkat Lunak".
-
-Para Pihak setuju sebagai berikut:
+The Parties agree as follows:
 
 ---
 
-## I. JENIS PERJANJIAN
+## I. TYPE OF AGREEMENT
 
-Perjanjian ini bersifat Sepihak, di mana Pihak Pertama memiliki kepemilikan tunggal atas Informasi Rahasia dan Perangkat Lunak.
+This Agreement is **Unilateral**, whereby Party A holds sole ownership of all Confidential Information and the Software.
 
-Pihak Kedua dilarang mengungkapkan, menggunakan, atau mendistribusikan Informasi Rahasia yang diberikan oleh Pihak Pertama dan Perwakilan Pihak Pertama dalam rangka mengembangkan perangkat lunak, tanpa izin tertulis dari Pihak Pertama.
-
----
-
-## II. DEFINISI
-
-"Informasi Rahasia" mencakup, namun tidak terbatas pada:
-
-- Produk perangkat lunak, kode sumber, kode terkait dalam semua format.
-- Rencana Pengembangan Perangkat Lunak, Rencana bisnis, laporan keuangan, daftar pelanggan atau pengguna (user database), data analitik.
-- Dokumentasi, korespondensi (termasuk komunikasi tertulis, lisan, maupun melalui email, aplikasi chat, atau media elektronik lainnya), ide, konsep, metode, know-how, teknik, proses, hasil pengembangan (termasuk Desain UI/UX, update, perbaikan bug, pengembangan lanjutan).
-
-Informasi Rahasia tidak mencakup informasi yang:
-
-(a) Secara umum tersedia untuk publik;
-(b) Merupakan praktik atau algoritma yang umum digunakan;
-(c) Telah dimiliki secara sah sebelum perjanjian;
-(d) Dikembangkan secara independen tanpa penggunaan Informasi Rahasia.
+Party B is prohibited from disclosing, using, or distributing any Confidential Information provided by Party A without Party A's prior written consent.
 
 ---
 
-## III. HAK ATAS HASIL KERJA
+## II. DEFINITIONS
 
-Seluruh hak kepemilikan, termasuk hak kekayaan intelektual atas perangkat lunak, dokumentasi, ide, metode, dan pengembangan (termasuk desain UI/UX, update, perbaikan bug, pengembangan lanjutan) apapun yang dibuat oleh Pihak Kedua berdasarkan proyek ini, adalah milik eksklusif Pihak Pertama. Pihak Kedua tidak memiliki hak klaim, baik secara langsung maupun tidak langsung.
+"Confidential Information" includes, but is not limited to:
 
----
+- Software products, source code, and related code in all formats.
+- Software development plans, business plans, financial reports, customer or user databases, and analytics data.
+- Documentation, correspondence (including written, verbal, or electronic communications via email, chat, or other media), ideas, concepts, methods, know-how, techniques, processes, and development outputs (including UI/UX design, updates, bug fixes, and further development).
 
-## IV. KEWAJIBAN
+Confidential Information does not include information that:
 
-Pihak Kedua berkewajiban untuk:
-
-- Menyimpan dan menjaga Informasi Rahasia dengan tingkat kerahasiaan tertinggi;
-- Tidak menyalin, menggunakan, mendistribusikan, atau mengungkapkan Informasi Rahasia tanpa izin tertulis dari Pihak Pertama;
-- Tidak menggunakan, menyalin, mendistribusikan, menjual, atau mengalihkan seluruh atau sebagian hasil kerja terkait Perangkat Lunak, termasuk potongan kode, desain, dan dokumentasi, kepada pihak ketiga tanpa persetujuan tertulis dari Pihak Pertama;
-- Menyerahkan seluruh bahan dan salinan Informasi Rahasia kepada Pihak Pertama dalam waktu 1 (satu) hari kerja jika diminta oleh Pihak Pertama;
-- Menghancurkan atau menghapus seluruh salinan fisik dan digital dari Informasi Rahasia dalam waktu 1 (satu) hari kerja setelah diminta oleh Pihak Pertama;
-- Pelanggaran atas kewajiban ini akan dikenakan sanksi minimal sebesar Rp50.000.000,- (lima puluh juta rupiah) sebagai ganti rugi awal, dan dapat ditambah sesuai dengan bukti kerugian nyata yang dapat dibuktikan secara hukum.
+(a) Is or becomes publicly available through no fault of Party B;
+(b) Constitutes common practice or widely-used algorithms;
+(c) Was lawfully in Party B's possession prior to this Agreement;
+(d) Was independently developed by Party B without use of the Confidential Information.
 
 ---
 
-## V. JANGKA WAKTU
+## III. OWNERSHIP OF WORK PRODUCT
 
-Kewajiban menjaga kerahasiaan berlaku selama 10 (sepuluh) tahun sejak tanggal penandatanganan atau sampai Informasi Rahasia tidak lagi memenuhi syarat sebagai rahasia dagang, mana yang lebih dahulu terjadi.
-
-Kewajiban menjaga kerahasiaan dan larangan penggunaan Informasi Rahasia tetap berlaku meskipun hubungan kerja sama antara Para Pihak telah berakhir.
+All ownership rights, including intellectual property rights over the software, documentation, ideas, methods, and any development outputs created by Party B under this project, are the exclusive property of Party A. Party B holds no claim, directly or indirectly.
 
 ---
 
-## VI. HUBUNGAN PARA PIHAK
+## IV. OBLIGATIONS
 
-Perjanjian ini tidak menciptakan hubungan kepegawaian, kemitraan, atau usaha bersama (joint venture) antara Para Pihak. Segala bentuk hubungan kerja, jika ada, akan dinyatakan dalam perjanjian terpisah.
+Party B agrees to:
 
----
-
-## VII. KETERPISAHAN
-
-Jika ada ketentuan yang dianggap tidak sah, bagian lainnya tetap berlaku dan diinterpretasikan sedekat mungkin dengan maksud asli Para Pihak.
-
----
-
-## VIII. INTEGRASI
-
-Perjanjian ini merupakan keseluruhan kesepakatan antara Para Pihak dan menggantikan semua komunikasi, proposal, atau kesepakatan sebelumnya.
+- Maintain the Confidential Information with the highest degree of confidentiality;
+- Not copy, use, distribute, or disclose the Confidential Information without Party A's prior written consent;
+- Not use, copy, distribute, sell, or transfer any work product related to the Software — including code snippets, designs, and documentation — to any third party without Party A's written approval;
+- Return all materials and copies of Confidential Information to Party A within 1 (one) business day upon request;
+- Destroy or delete all physical and digital copies of Confidential Information within 1 (one) business day upon request;
+- Breach of these obligations will incur a minimum penalty of **IDR 50,000,000** (fifty million rupiah) as initial damages, with additional liability subject to proven losses.
 
 ---
 
-## IX. PENEGAKAN
+## V. TERM
 
-Para Pihak mengakui dan setuju bahwa karena sifat unik dan sensitif dari Informasi Rahasia, setiap pelanggaran terhadap perjanjian ini akan menyebabkan kerugian yang tidak dapat diperbaiki, sehingga ganti rugi dan/atau pemulihan setara dapat dimohonkan.
+Confidentiality obligations remain in effect for **10 (ten) years** from the date of signing, or until the Confidential Information no longer qualifies as a trade secret, whichever occurs first.
 
-Pihak yang dirugikan berhak atas semua upaya hukum yang tersedia, termasuk namun tidak terbatas pada kompensasi finansial, perintah pengadilan, dan penyelesaian melalui lembaga arbitrase independen yang disepakati oleh kedua belah pihak.
-
----
-
-## X. PENYELESAIAN SENGKETA
-
-Setiap sengketa yang timbul dari pelaksanaan perjanjian ini akan diselesaikan terlebih dahulu melalui musyawarah mufakat. Apabila tidak tercapai mufakat dalam waktu 30 (tiga puluh) hari, maka Para Pihak sepakat untuk menyelesaikannya melalui arbitrase di Badan Arbitrase Nasional Indonesia (BANI) di Jakarta.
-
-Apabila salah satu pihak tidak menyetujui penyelesaian melalui arbitrase, maka Para Pihak sepakat bahwa Pengadilan Negeri Jakarta Selatan akan menjadi lembaga yang berwenang untuk menyelesaikan sengketa yang timbul dari perjanjian ini.
+These obligations survive the termination of any working relationship between the Parties.
 
 ---
 
-## XI. HUKUM YANG BERLAKU
+## VI. RELATIONSHIP OF THE PARTIES
 
-Perjanjian ini tunduk pada hukum Negara Kesatuan Republik Indonesia dan tetap berlaku meskipun ditandatangani secara elektronik.
+This Agreement does not create an employment, partnership, or joint venture relationship between the Parties. Any working arrangement, if applicable, will be set out in a separate agreement.
 
 ---
 
-## TANDA TANGAN
+## VII. SEVERABILITY
 
-Tanda Tangan
+If any provision is found to be unenforceable, the remaining provisions continue in full effect and shall be interpreted as closely as possible to the original intent of the Parties.
 
-**Pihak Pertama:**
+---
+
+## VIII. ENTIRE AGREEMENT
+
+This Agreement constitutes the entire understanding between the Parties regarding confidentiality and supersedes all prior communications, proposals, or agreements on this subject.
+
+---
+
+## IX. ENFORCEMENT
+
+The Parties acknowledge that any breach of this Agreement may cause irreparable harm for which monetary damages may be insufficient. The injured party is entitled to all available legal remedies, including financial compensation, injunctive relief, and resolution through an agreed independent arbitration body.
+
+---
+
+## X. DISPUTE RESOLUTION
+
+Any dispute arising from this Agreement shall first be resolved through good-faith negotiation. If no resolution is reached within **30 (thirty) days**, the Parties agree to submit the dispute to arbitration at the **Indonesian National Arbitration Board (BANI)** in Jakarta.
+
+If either party does not consent to arbitration, the **South Jakarta District Court** shall have jurisdiction.
+
+---
+
+## XI. GOVERNING LAW
+
+This Agreement is governed by the laws of the **Republic of Indonesia** and remains valid when signed electronically.
+
+---
+
+## SIGNATURES
+
+**Party A:**
 
 _________________________
 
-[NAMA PERWAKILAN PIHAK PERTAMA]
+[NAME]
 
-Tanggal: [DD / MM / YYYY]
+[DD / MM / YYYY]
 
 ---
 
-**Pihak Kedua:**
+**Party B:**
 
 _________________________
 
-[NAMA PIHAK KEDUA]
+[NAME]
 
-Tanggal: [DD / MM / YYYY]
+[DD / MM / YYYY]
 
 ---
 
