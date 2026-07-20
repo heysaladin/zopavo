@@ -1,6 +1,13 @@
-import { readPhaseDocs } from "@/lib/phase-docs";
-import { PhaseFileBrowser } from "@/components/docs/phase-file-browser";
+import { StageDeliverables } from "@/components/stage/stage-deliverables";
+
+export const dynamic = "force-dynamic";
 
 export default function DevelopmentPage() {
-  return <PhaseFileBrowser stepId="DEVELOPMENT" sections={readPhaseDocs("06-development")} />;
+  return (
+    <StageDeliverables
+      stage="DEVELOPMENT"
+      stepId="DEVELOPMENT"
+      phaseDir="06-development"
+    />
+  );
 }

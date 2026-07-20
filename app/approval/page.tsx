@@ -1,6 +1,13 @@
-import { readPhaseDocs } from "@/lib/phase-docs";
-import { PhaseFileBrowser } from "@/components/docs/phase-file-browser";
+import { StageDeliverables } from "@/components/stage/stage-deliverables";
+
+export const dynamic = "force-dynamic";
 
 export default function ApprovalPage() {
-  return <PhaseFileBrowser stepId="APPROVAL" sections={readPhaseDocs("05-approval")} />;
+  return (
+    <StageDeliverables
+      stage="APPROVAL"
+      stepId="APPROVAL"
+      phaseDir="05-approval"
+    />
+  );
 }

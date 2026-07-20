@@ -1,6 +1,13 @@
-import { readPhaseDocs } from "@/lib/phase-docs";
-import { PhaseFileBrowser } from "@/components/docs/phase-file-browser";
+import { StageDeliverables } from "@/components/stage/stage-deliverables";
+
+export const dynamic = "force-dynamic";
 
 export default function HandoverPage() {
-  return <PhaseFileBrowser stepId="HANDOVER" sections={readPhaseDocs("08-handover")} />;
+  return (
+    <StageDeliverables
+      stage="HANDOVER"
+      stepId="HANDOVER"
+      phaseDir="08-handover"
+    />
+  );
 }
