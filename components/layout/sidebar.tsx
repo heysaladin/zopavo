@@ -28,7 +28,7 @@ export function MobileHeader() {
   const { toggleMobileMenu } = useAppStore();
   return (
     <div className="md:hidden flex items-center gap-3 px-4 py-3 border-b border-border bg-background shrink-0">
-      <button onClick={toggleMobileMenu} className="p-1.5 rounded-md hover:bg-accent transition-colors">
+      <button onClick={toggleMobileMenu} className="flex items-center justify-center w-10 h-10 -ml-1.5 rounded-md hover:bg-accent transition-colors">
         <Menu className="w-5 h-5" />
       </button>
       <div className="flex items-center gap-2">

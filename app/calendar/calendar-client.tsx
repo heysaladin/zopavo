@@ -42,18 +42,18 @@ export function CalendarClient({ posts }: { posts: Post[] }) {
   return (
     <div className="max-w-5xl mx-auto">
       {/* Toolbar */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <button onClick={() => setCurrent(subMonths(current, 1))} className="p-1.5 rounded-md hover:bg-accent text-muted-foreground hover:text-foreground transition-colors">
+      <div className="flex items-center justify-between gap-2 mb-6 flex-wrap">
+        <div className="flex items-center gap-2">
+          <button onClick={() => setCurrent(subMonths(current, 1))} className="flex items-center justify-center w-8 h-8 rounded-md hover:bg-accent text-muted-foreground hover:text-foreground transition-colors">
             <ChevronLeft className="w-4 h-4" />
           </button>
-          <h2 className="text-base font-semibold text-foreground w-36 text-center">
-            {format(current, "MMMM yyyy")}
+          <h2 className="text-base font-semibold text-foreground w-28 sm:w-36 text-center">
+            {format(current, "MMM yyyy")}
           </h2>
-          <button onClick={() => setCurrent(addMonths(current, 1))} className="p-1.5 rounded-md hover:bg-accent text-muted-foreground hover:text-foreground transition-colors">
+          <button onClick={() => setCurrent(addMonths(current, 1))} className="flex items-center justify-center w-8 h-8 rounded-md hover:bg-accent text-muted-foreground hover:text-foreground transition-colors">
             <ChevronRight className="w-4 h-4" />
           </button>
-          <button onClick={() => setCurrent(new Date())} className="px-2.5 py-1 text-xs text-muted-foreground hover:text-foreground border border-border rounded-md hover:bg-accent transition-colors ml-2">
+          <button onClick={() => setCurrent(new Date())} className="px-2.5 py-1 text-xs text-muted-foreground hover:text-foreground border border-border rounded-md hover:bg-accent transition-colors">
             Today
           </button>
         </div>
@@ -77,9 +77,10 @@ export function CalendarClient({ posts }: { posts: Post[] }) {
         <div className="border border-border rounded-lg overflow-hidden">
           {/* Day headers */}
           <div className="grid grid-cols-7 border-b border-border bg-muted">
-            {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
-              <div key={d} className="px-3 py-2 text-xs font-medium text-muted-foreground text-center">
-                {d}
+            {[["M","Mon"],["T","Tue"],["W","Wed"],["T","Thu"],["F","Fri"],["S","Sat"],["S","Sun"]].map(([short, full], i) => (
+              <div key={i} className="px-1 sm:px-3 py-2 text-xs font-medium text-muted-foreground text-center">
+                <span className="sm:hidden">{short}</span>
+                <span className="hidden sm:inline">{full}</span>
               </div>
             ))}
           </div>
@@ -97,7 +98,7 @@ export function CalendarClient({ posts }: { posts: Post[] }) {
                   key={day.toISOString()}
                   onClick={() => setSelected(isSameDay(day, selected ?? new Date(0)) ? null : day)}
                   className={cn(
-                    "bg-background p-2 min-h-[80px] text-left transition-colors hover:bg-accent",
+                    "bg-background p-1 sm:p-2 min-h-[60px] sm:min-h-[80px] text-left transition-colors hover:bg-accent",
                     !inMonth && "opacity-40",
                     isSelected && "bg-primary/5 ring-1 ring-inset ring-primary/25"
                   )}

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Sidebar, MobileHeader } from "@/components/layout/sidebar";
 import { ToastProvider } from "@/components/ui/toast-provider";
@@ -7,6 +7,11 @@ import { ThemeProvider } from "@/components/ui/theme-provider";
 export const metadata: Metadata = {
   title: "Zopavo",
   description: "End-to-end project management — from marketing to handover.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

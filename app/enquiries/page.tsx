@@ -177,7 +177,7 @@ export default function EnquiriesPage() {
       />
 
       {/* Tabs */}
-      <div className="flex gap-1 border-b border-border">
+      <div className="flex gap-1 border-b border-border overflow-x-auto scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0">
         {TABS.map((t) => {
           const count =
             t.value === "ALL"
@@ -188,7 +188,7 @@ export default function EnquiriesPage() {
               key={t.value}
               onClick={() => setTab(t.value)}
               className={cn(
-                "px-3 py-2 text-sm font-medium border-b-2 transition-colors -mb-px",
+                "px-3 py-2 text-sm font-medium border-b-2 transition-colors -mb-px shrink-0",
                 tab === t.value
                   ? "border-primary text-foreground"
                   : "border-transparent text-muted-foreground hover:text-foreground"

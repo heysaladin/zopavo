@@ -26,7 +26,7 @@ export function ContentShell({
   return (
     <div
       className={cn(
-        'w-full mx-auto px-4 py-6',
+        'w-full mx-auto px-4 py-4 sm:py-6',
         maxWidthClasses[maxWidth],
         className,
       )}

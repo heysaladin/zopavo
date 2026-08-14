@@ -37,21 +37,21 @@ export function LibraryClient({ initialPosts }: { initialPosts: Post[] }) {
   return (
     <div className="max-w-6xl mx-auto">
       {/* Filters */}
-      <div className="flex items-center gap-4 mb-6 flex-wrap">
+      <div className="flex flex-col gap-3 mb-6 sm:flex-row sm:items-center sm:gap-4 sm:flex-wrap">
         <input
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search posts..."
-          className="px-3 py-1.5 bg-background border border-border rounded-md text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring w-52 transition-colors"
+          className="px-3 py-1.5 bg-background border border-border rounded-md text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring w-full sm:w-52 transition-colors"
         />
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 overflow-x-auto scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0">
           {STATUS_FILTERS.map((s) => (
             <button
               key={s}
               onClick={() => setStatusFilter(s)}
               className={cn(
-                "px-2.5 py-1 rounded-md text-xs font-medium transition-colors",
+                "px-2.5 py-1 rounded-md text-xs font-medium transition-colors shrink-0",
                 statusFilter === s
                   ? "bg-accent text-accent-foreground"
                   : "text-muted-foreground hover:text-foreground hover:bg-accent"
@@ -60,20 +60,19 @@ export function LibraryClient({ initialPosts }: { initialPosts: Post[] }) {
               {s === "ALL" ? "All" : s.charAt(0) + s.slice(1).toLowerCase()}
             </button>
           ))}
-        </div>
-        <div className="flex items-center gap-1 border-l border-border pl-4">
+          <div className="w-px h-4 bg-border mx-1 shrink-0" />
           {PLATFORM_FILTERS.map((p) => (
             <button
               key={p}
               onClick={() => setPlatformFilter(p)}
               className={cn(
-                "px-2.5 py-1 rounded-md text-xs font-medium transition-colors",
+                "px-2.5 py-1 rounded-md text-xs font-medium transition-colors shrink-0",
                 platformFilter === p
                   ? "bg-accent text-accent-foreground"
                   : "text-muted-foreground hover:text-foreground hover:bg-accent"
               )}
             >
-              {p === "ALL" ? "All platforms" : p === "INSTAGRAM" ? "Instagram" : p === "LINKEDIN" ? "LinkedIn" : "Both"}
+              {p === "ALL" ? "All" : p === "INSTAGRAM" ? "Instagram" : p === "LINKEDIN" ? "LinkedIn" : "Both"}
             </button>
           ))}
         </div>
