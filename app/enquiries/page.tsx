@@ -2,8 +2,30 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { format } from "date-fns";
-import { Plus, X, Inbox } from "lucide-react";
+import { Plus, Inbox } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ContentShell } from "@/components/webapp/ContentShell";
+import { PageHeader } from "@/components/webapp/PageHeader";
+import { EmptyState } from "@/components/webapp/EmptyState";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type EnquiryStatus = "NEW" | "REPLIED" | "QUALIFIED" | "CLOSED";
 type LeadSource =
@@ -141,26 +163,18 @@ export default function EnquiriesPage() {
   }
 
   return (
-    <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-6">
+    <ContentShell maxWidth="xl" className="space-y-6">
       {/* Header */}
-      <div className="flex items-start justify-between gap-3 flex-wrap">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight flex items-center gap-2">
-            <Inbox className="w-6 h-6 text-blue-500" />
-            Enquiries
-          </h1>
-          <p className="text-sm text-muted-foreground mt-0.5">
-            Manage incoming leads and first contact
-          </p>
-        </div>
-        <button
-          onClick={() => setModalOpen(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-medium rounded-md transition-colors"
-        >
-          <Plus className="w-4 h-4" />
-          New Enquiry
-        </button>
-      </div>
+      <PageHeader
+        title="Enquiries"
+        description="Manage incoming leads and first contact"
+        actions={
+          <Button onClick={() => setModalOpen(true)}>
+            <Plus className="w-4 h-4 mr-1" />
+            New Enquiry
+          </Button>
+        }
+      />
 
       {/* Tabs */}
       <div className="flex gap-1 border-b border-border">
@@ -193,14 +207,11 @@ export default function EnquiriesPage() {
       {loading ? (
         <div className="space-y-2">
           {[...Array(5)].map((_, i) => (
-            <div key={i} className="surface rounded-lg h-16 animate-pulse" />
+            <Skeleton key={i} className="h-16 rounded-lg" />
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="surface rounded-xl p-12 text-center">
-          <Inbox className="w-8 h-8 text-muted-foreground/30 mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground">No enquiries here</p>
-        </div>
+        <EmptyState icon={<Inbox />} title="No enquiries here" />
       ) : (
         <div className="space-y-2">
           {filtered.map((enq) => (
@@ -237,62 +248,67 @@ export default function EnquiriesPage() {
               {/* Actions */}
               <div className="flex items-center gap-2 flex-wrap">
                 {enq.status === "NEW" && (
-                  <button
+                  <Button
+                    variant="outline"
+                    size="sm"
                     onClick={() =>
                       patch(enq.id, {
                         status: "REPLIED",
                         firstRepliedAt: new Date().toISOString(),
                       })
                     }
-                    className="px-2.5 py-1 text-xs rounded-md bg-amber-500/10 text-amber-600 hover:bg-amber-500/20 transition-colors"
                   >
                     Mark Replied
-                  </button>
+                  </Button>
                 )}
                 {(enq.status === "NEW" || enq.status === "REPLIED") && (
-                  <button
+                  <Button
+                    variant="outline"
+                    size="sm"
                     onClick={() =>
                       patch(enq.id, {
                         status: "QUALIFIED",
                         qualifiedAt: new Date().toISOString(),
                       })
                     }
-                    className="px-2.5 py-1 text-xs rounded-md bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 transition-colors"
                   >
                     Qualify
-                  </button>
+                  </Button>
                 )}
                 {enq.status !== "CLOSED" && (
                   <>
                     {closingId === enq.id ? (
                       <div className="flex items-center gap-2">
-                        <input
+                        <Input
                           type="text"
                           value={closeReason}
                           onChange={(e) => setCloseReason(e.target.value)}
                           placeholder="Reason (optional)"
-                          className="text-xs px-2 py-1 bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary/50"
+                          className="text-xs h-7 px-2"
                         />
-                        <button
+                        <Button
+                          variant="destructive"
+                          size="sm"
                           onClick={() => handleClose(enq.id)}
-                          className="px-2.5 py-1 text-xs rounded-md bg-rose-500/10 text-rose-600 hover:bg-rose-500/20 transition-colors"
                         >
                           Confirm
-                        </button>
-                        <button
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           onClick={() => { setClosingId(null); setCloseReason(""); }}
-                          className="px-2.5 py-1 text-xs rounded-md hover:bg-accent text-muted-foreground transition-colors"
                         >
                           Cancel
-                        </button>
+                        </Button>
                       </div>
                     ) : (
-                      <button
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={() => setClosingId(enq.id)}
-                        className="px-2.5 py-1 text-xs rounded-md hover:bg-rose-500/10 text-muted-foreground hover:text-rose-500 transition-colors"
                       >
                         Close
-                      </button>
+                      </Button>
                     )}
                   </>
                 )}
@@ -308,103 +324,92 @@ export default function EnquiriesPage() {
       )}
 
       {/* New Enquiry Modal */}
-      {modalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-          <div className="bg-background border border-border rounded-xl w-full max-w-md shadow-xl">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-border">
-              <h2 className="text-base font-semibold">New Enquiry</h2>
-              <button
-                onClick={() => { setModalOpen(false); setForm(EMPTY_FORM); }}
-                className="p-1 rounded-md hover:bg-accent text-muted-foreground transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
+      <Dialog
+        open={modalOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            setModalOpen(false);
+            setForm(EMPTY_FORM);
+          } else {
+            setModalOpen(true);
+          }
+        }}
+      >
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>New Enquiry</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleCreate} className="space-y-4">
+            <div>
+              <Label className="text-xs">Contact Name *</Label>
+              <Input
+                type="text"
+                required
+                value={form.contactName}
+                onChange={(e) => setForm({ ...form, contactName: e.target.value })}
+              />
             </div>
-            <form onSubmit={handleCreate} className="px-5 py-4 space-y-4">
-              <div>
-                <label className="block text-xs font-medium text-muted-foreground mb-1">
-                  Contact Name *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={form.contactName}
-                  onChange={(e) => setForm({ ...form, contactName: e.target.value })}
-                  className="w-full px-3 py-2 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary/50"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-muted-foreground mb-1">
-                  Contact Email
-                </label>
-                <input
-                  type="email"
-                  value={form.contactEmail}
-                  onChange={(e) => setForm({ ...form, contactEmail: e.target.value })}
-                  className="w-full px-3 py-2 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary/50"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-muted-foreground mb-1">
-                  Need Summary *
-                </label>
-                <textarea
-                  required
-                  rows={3}
-                  value={form.needSummary}
-                  onChange={(e) => setForm({ ...form, needSummary: e.target.value })}
-                  className="w-full px-3 py-2 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary/50 resize-none"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-muted-foreground mb-1">
-                  Lead Source *
-                </label>
-                <select
-                  required
-                  value={form.source}
-                  onChange={(e) => setForm({ ...form, source: e.target.value as LeadSource })}
-                  className="w-full px-3 py-2 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary/50"
-                >
+            <div>
+              <Label className="text-xs">Contact Email</Label>
+              <Input
+                type="email"
+                value={form.contactEmail}
+                onChange={(e) => setForm({ ...form, contactEmail: e.target.value })}
+              />
+            </div>
+            <div>
+              <Label className="text-xs">Need Summary *</Label>
+              <Textarea
+                required
+                rows={3}
+                value={form.needSummary}
+                onChange={(e) => setForm({ ...form, needSummary: e.target.value })}
+                className="resize-none"
+              />
+            </div>
+            <div>
+              <Label className="text-xs">Lead Source *</Label>
+              <Select
+                required
+                value={form.source}
+                onValueChange={(value) => setForm({ ...form, source: value as LeadSource })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
                   {LEAD_SOURCES.map((s) => (
-                    <option key={s} value={s}>
+                    <SelectItem key={s} value={s}>
                       {s.replace("_", " ")}
-                    </option>
+                    </SelectItem>
                   ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-muted-foreground mb-1">
-                  Client ID (optional)
-                </label>
-                <input
-                  type="text"
-                  value={form.clientId}
-                  onChange={(e) => setForm({ ...form, clientId: e.target.value })}
-                  placeholder="Leave blank to create without client link"
-                  className="w-full px-3 py-2 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary/50"
-                />
-              </div>
-              <div className="flex items-center justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => { setModalOpen(false); setForm(EMPTY_FORM); }}
-                  className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="px-4 py-2 text-sm font-medium bg-primary hover:bg-primary/90 text-primary-foreground rounded-md transition-colors disabled:opacity-50"
-                >
-                  {submitting ? "Creating…" : "Create Enquiry"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-    </div>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label className="text-xs">Client ID (optional)</Label>
+              <Input
+                type="text"
+                value={form.clientId}
+                onChange={(e) => setForm({ ...form, clientId: e.target.value })}
+                placeholder="Leave blank to create without client link"
+              />
+            </div>
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => { setModalOpen(false); setForm(EMPTY_FORM); }}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={submitting}>
+                {submitting ? "Creating…" : "Create Enquiry"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </ContentShell>
   );
 }

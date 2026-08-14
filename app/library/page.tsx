@@ -2,6 +2,9 @@ import { db } from "@/lib/db";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { LibraryClient } from "./library-client";
+import { ContentShell } from "@/components/webapp/ContentShell";
+import { PageHeader } from "@/components/webapp/PageHeader";
+import { Button } from "@/components/ui/button";
 
 export const dynamic = "force-dynamic";
 
@@ -16,21 +19,20 @@ export default async function LibraryPage() {
   }
 
   return (
-    <div className="p-8">
-      <div className="flex items-center justify-between mb-8 max-w-6xl mx-auto">
-        <div>
-          <h1 className="text-2xl font-semibold text-foreground tracking-tight">Library</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">{posts.length} posts</p>
-        </div>
-        <Link
-          href="/library/new"
-          className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-medium rounded-md transition-colors"
-        >
-          <Plus className="w-4 h-4" />
-          New Post
-        </Link>
-      </div>
+    <ContentShell maxWidth="full" className="space-y-6">
+      <PageHeader
+        title="Library"
+        description={`${posts.length} posts`}
+        actions={
+          <Button asChild>
+            <Link href="/library/new">
+              <Plus className="w-4 h-4 mr-1" />
+              New Post
+            </Link>
+          </Button>
+        }
+      />
       <LibraryClient initialPosts={posts as any} />
-    </div>
+    </ContentShell>
   );
 }

@@ -1,12 +1,21 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import { format } from "date-fns";
-import { ArrowLeft, ChevronRight, Plus, AlertTriangle, CheckCircle, Paperclip, Trash2, ExternalLink } from "lucide-react";
+import { ChevronRight, Plus, AlertTriangle, CheckCircle, Paperclip, Trash2, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { STAGE_PATHS } from "@/lib/stage-gates";
+import { ContentShell } from "@/components/webapp/ContentShell";
+import { NavBreadcrumb } from "@/components/webapp/NavBreadcrumb";
+import { PageHeader } from "@/components/webapp/PageHeader";
+import { SectionHeader } from "@/components/webapp/SectionHeader";
+import { EmptyState } from "@/components/webapp/EmptyState";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type DeliverableType = "BRANDING" | "ILLUSTRATION" | "GRAPHIC" | "WEB_APP";
 type SubUnit = "HIKARI" | "DRAVENCLAW" | "THINKSOFT" | "MITAYANI";
@@ -342,18 +351,21 @@ export default function DeliverableDetailPage() {
 
   if (loading) {
     return (
-      <div className="p-8 max-w-4xl mx-auto space-y-4">
-        <div className="h-8 w-48 bg-muted rounded animate-pulse" />
-        <div className="surface rounded-xl h-60 animate-pulse" />
-      </div>
+      <ContentShell maxWidth="lg">
+        <div className="space-y-4">
+          <Skeleton className="h-5 w-48" />
+          <Skeleton className="h-8 w-64" />
+          <Skeleton className="h-60 w-full rounded-xl" />
+        </div>
+      </ContentShell>
     );
   }
 
   if (!deliverable) {
     return (
-      <div className="p-8 max-w-4xl mx-auto">
+      <ContentShell maxWidth="lg">
         <p className="text-sm text-muted-foreground">Deliverable not found.</p>
-      </div>
+      </ContentShell>
     );
   }
 
@@ -371,31 +383,29 @@ export default function DeliverableDetailPage() {
   const revisionsExceeded = changesRequestedCount >= agreedRevisionRounds;
 
   return (
-    <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-8">
-      {/* Back */}
-      <Link
-        href={`/projects/${deliverable.project.id}`}
-        className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1 w-fit"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        {deliverable.project.name}
-      </Link>
+    <ContentShell maxWidth="lg" className="space-y-8">
+      {/* Breadcrumb */}
+      <NavBreadcrumb items={[
+        { label: "Projects", href: "/projects" },
+        { label: deliverable.project.name, href: `/projects/${deliverable.project.id}` },
+        { label: deliverable.name },
+      ]} />
 
       {/* Header */}
-      <div>
-        <div className="flex items-center gap-2 flex-wrap">
-          <h1 className="text-2xl font-semibold tracking-tight">{deliverable.name}</h1>
-          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground">
-            {deliverable.type.replace("_", " ")}
-          </span>
-          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground">
-            {deliverable.subUnit}
-          </span>
-        </div>
-        <p className="text-sm text-muted-foreground mt-0.5">
-          {deliverable.project.client.name} · {deliverable.project.name}
-        </p>
-      </div>
+      <PageHeader
+        title={deliverable.name}
+        description={`${deliverable.project.client.name} · ${deliverable.project.name}`}
+        actions={
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground">
+              {deliverable.type.replace("_", " ")}
+            </span>
+            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground">
+              {deliverable.subUnit}
+            </span>
+          </div>
+        }
+      />
 
       {/* Stage progression */}
       <div className="surface rounded-xl p-4">
@@ -436,19 +446,15 @@ export default function DeliverableDetailPage() {
       {/* Advance button */}
       {!isDone && (
         <div>
-          <button
+          <Button
             onClick={handleAdvance}
             disabled={advancing}
-            className={cn(
-              "w-full px-6 py-3 rounded-xl text-sm font-semibold transition-all",
-              "bg-primary hover:bg-primary/90 text-primary-foreground",
-              "disabled:opacity-50"
-            )}
+            className="w-full py-3 rounded-xl"
           >
             {advancing
               ? "Checking gates…"
               : `Advance to ${stagePath[currentStageIdx + 1] ?? "Done"}`}
-          </button>
+          </Button>
           {advanceError && (
             <div className="mt-2 flex items-center gap-2 text-sm text-rose-500 surface rounded-lg px-4 py-2">
               <AlertTriangle className="w-4 h-4 shrink-0" />
@@ -470,14 +476,14 @@ export default function DeliverableDetailPage() {
       {/* DESIGN */}
       {deliverable.stage === "DESIGN" && (
         <div className="surface rounded-xl p-5 space-y-4">
-          <h2 className="text-sm font-semibold">Submit for Approval</h2>
+          <SectionHeader title="Submit for Approval" />
           <p className="text-xs text-muted-foreground">
             When design is ready, create an approval record to move to the Approval stage.
           </p>
-          <button
+          <Button
             onClick={handleSubmitForApproval}
             disabled={submittingApproval || !!pendingApproval}
-            className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors disabled:opacity-50"
+            size="sm"
           >
             <Plus className="w-4 h-4" />
             {submittingApproval
@@ -485,7 +491,7 @@ export default function DeliverableDetailPage() {
               : pendingApproval
               ? "Approval pending"
               : "Submit for Approval"}
-          </button>
+          </Button>
           {deliverable.approvals.length > 0 && (
             <div className="space-y-2">
               <p className="text-xs font-medium text-muted-foreground">Previous rounds:</p>
@@ -517,15 +523,17 @@ export default function DeliverableDetailPage() {
       {/* APPROVAL */}
       {deliverable.stage === "APPROVAL" && (
         <div className="surface rounded-xl p-5 space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold">Client Approval</h2>
-            {revisionsExceeded && (
-              <span className="text-xs text-rose-500 flex items-center gap-1">
-                <AlertTriangle className="w-3.5 h-3.5" />
-                Revision limit reached ({changesRequestedCount}/{agreedRevisionRounds})
-              </span>
-            )}
-          </div>
+          <SectionHeader
+            title="Client Approval"
+            actions={
+              revisionsExceeded ? (
+                <span className="text-xs text-rose-500 flex items-center gap-1">
+                  <AlertTriangle className="w-3.5 h-3.5" />
+                  Revision limit reached ({changesRequestedCount}/{agreedRevisionRounds})
+                </span>
+              ) : undefined
+            }
+          />
 
           {pendingApproval ? (
             <div className="space-y-4">
@@ -538,27 +546,25 @@ export default function DeliverableDetailPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-muted-foreground mb-1">
-                  Signed off by
-                </label>
-                <input
+                <Label className="text-xs mb-1 block">Signed off by</Label>
+                <Input
                   type="text"
                   value={signedOffBy}
                   onChange={(e) => setSignedOffBy(e.target.value)}
                   placeholder="Client name…"
-                  className="w-full px-3 py-2 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary/50"
                 />
               </div>
 
               <div className="flex gap-2">
-                <button
+                <Button
                   onClick={() => handleApprovalDecision(pendingApproval.id, "APPROVED")}
                   disabled={!!approvingId}
-                  className="flex-1 px-4 py-2 text-sm font-medium bg-emerald-500 hover:bg-emerald-600 text-white rounded-md transition-colors disabled:opacity-50"
+                  className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white"
+                  size="sm"
                 >
                   Approve
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={() => {
                     const fb = prompt("Feedback for client:");
                     if (fb !== null) {
@@ -567,10 +573,11 @@ export default function DeliverableDetailPage() {
                     }
                   }}
                   disabled={!!approvingId}
-                  className="flex-1 px-4 py-2 text-sm font-medium bg-amber-500 hover:bg-amber-600 text-white rounded-md transition-colors disabled:opacity-50"
+                  className="flex-1 bg-amber-500 hover:bg-amber-600 text-white"
+                  size="sm"
                 >
                   Request Changes
-                </button>
+                </Button>
               </div>
 
               {!revisionsExceeded && (
@@ -584,14 +591,14 @@ export default function DeliverableDetailPage() {
               <p className="text-xs text-muted-foreground">
                 No pending approval. Submit from Design stage to create one.
               </p>
-              <button
+              <Button
                 onClick={handleSubmitForApproval}
                 disabled={submittingApproval}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors disabled:opacity-50"
+                size="sm"
               >
                 <Plus className="w-4 h-4" />
                 Submit New Approval Round
-              </button>
+              </Button>
             </div>
           )}
 
@@ -631,7 +638,7 @@ export default function DeliverableDetailPage() {
       {/* DEVELOPMENT */}
       {deliverable.stage === "DEVELOPMENT" && (
         <div className="surface rounded-xl p-5 space-y-4">
-          <h2 className="text-sm font-semibold">Development Progress</h2>
+          <SectionHeader title="Development Progress" />
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-xs text-muted-foreground">Progress</span>
@@ -653,13 +660,13 @@ export default function DeliverableDetailPage() {
               />
             </div>
           </div>
-          <button
+          <Button
             onClick={handleSaveProgress}
             disabled={savingProgress}
-            className="px-4 py-2 text-sm font-medium bg-orange-500 hover:bg-orange-600 text-white rounded-md transition-colors disabled:opacity-50"
+            size="sm"
           >
             {savingProgress ? "Saving…" : "Save Progress"}
-          </button>
+          </Button>
           {progressValue < 100 && (
             <p className="text-xs text-muted-foreground">
               Progress must reach 100% to advance to QC.
@@ -671,12 +678,12 @@ export default function DeliverableDetailPage() {
       {/* QC */}
       {deliverable.stage === "QC" && (
         <div className="surface rounded-xl p-5 space-y-4">
-          <h2 className="text-sm font-semibold">Quality Control</h2>
+          <SectionHeader title="Quality Control" />
 
           {/* Issues list */}
           <div className="space-y-2">
             {deliverable.issues.length === 0 ? (
-              <p className="text-xs text-muted-foreground">No issues logged.</p>
+              <EmptyState title="No issues logged." />
             ) : (
               deliverable.issues.map((issue) => (
                 <div
@@ -702,18 +709,22 @@ export default function DeliverableDetailPage() {
                   <div className="flex gap-1 shrink-0">
                     {issue.status === "OPEN" && (
                       <>
-                        <button
+                        <Button
                           onClick={() => handleIssueStatus(issue.id, "RESOLVED")}
-                          className="px-2 py-1 text-xs rounded-md bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 transition-colors"
+                          variant="ghost"
+                          size="sm"
+                          className="px-2 py-1 text-xs bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20"
                         >
                           Resolve
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                           onClick={() => handleIssueStatus(issue.id, "ACCEPTED")}
-                          className="px-2 py-1 text-xs rounded-md hover:bg-accent text-muted-foreground transition-colors"
+                          variant="ghost"
+                          size="sm"
+                          className="px-2 py-1 text-xs text-muted-foreground"
                         >
                           Accept
-                        </button>
+                        </Button>
                       </>
                     )}
                   </div>
@@ -724,29 +735,28 @@ export default function DeliverableDetailPage() {
 
           {/* Add issue */}
           <form onSubmit={handleAddIssue} className="flex items-center gap-2">
-            <input
+            <Input
               type="text"
               value={newIssueTitle}
               onChange={(e) => setNewIssueTitle(e.target.value)}
               placeholder="Issue title…"
-              className="flex-1 px-3 py-2 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary/50"
+              className="flex-1"
             />
             <label className="flex items-center gap-1.5 text-xs text-muted-foreground whitespace-nowrap">
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={newIssueBlocking}
-                onChange={(e) => setNewIssueBlocking(e.target.checked)}
-                className="rounded"
+                onCheckedChange={(checked) => setNewIssueBlocking(!!checked)}
               />
               Blocking
             </label>
-            <button
+            <Button
               type="submit"
               disabled={!newIssueTitle || addingIssue}
-              className="px-3 py-2 text-sm font-medium bg-primary hover:bg-primary/90 text-primary-foreground rounded-md transition-colors disabled:opacity-50 shrink-0"
+              size="sm"
+              className="shrink-0"
             >
               <Plus className="w-4 h-4" />
-            </button>
+            </Button>
           </form>
 
           {/* Retreat to dev */}
@@ -757,20 +767,21 @@ export default function DeliverableDetailPage() {
                 {blockingOpenIssues.length} blocking issue{blockingOpenIssues.length !== 1 ? "s" : ""} — cannot advance
               </p>
               <div className="flex items-center gap-2">
-                <input
+                <Input
                   type="text"
                   value={retreatReason}
                   onChange={(e) => setRetreatReason(e.target.value)}
                   placeholder="Reason for returning to development…"
-                  className="flex-1 px-3 py-2 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary/50"
+                  className="flex-1"
                 />
-                <button
+                <Button
                   onClick={handleRetreat}
                   disabled={!retreatReason || retreating}
-                  className="px-3 py-2 text-sm font-medium bg-orange-500 hover:bg-orange-600 text-white rounded-md transition-colors disabled:opacity-50 whitespace-nowrap"
+                  size="sm"
+                  className="whitespace-nowrap"
                 >
                   {retreating ? "…" : "Back to Dev"}
-                </button>
+                </Button>
               </div>
             </div>
           )}
@@ -780,39 +791,33 @@ export default function DeliverableDetailPage() {
       {/* HANDOVER */}
       {deliverable.stage === "HANDOVER" && (
         <div className="surface rounded-xl p-5 space-y-4">
-          <h2 className="text-sm font-semibold">Handover Checklist</h2>
+          <SectionHeader title="Handover Checklist" />
 
           <div className="space-y-3">
             <label className="flex items-center gap-3 cursor-pointer">
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={handoverForm.filesTransferred}
-                onChange={(e) =>
-                  setHandoverForm({ ...handoverForm, filesTransferred: e.target.checked })
+                onCheckedChange={(checked) =>
+                  setHandoverForm({ ...handoverForm, filesTransferred: !!checked })
                 }
-                className="rounded"
               />
               <span className="text-sm">Files transferred to client</span>
             </label>
             <label className="flex items-center gap-3 cursor-pointer">
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={handoverForm.checklistPassed}
-                onChange={(e) =>
-                  setHandoverForm({ ...handoverForm, checklistPassed: e.target.checked })
+                onCheckedChange={(checked) =>
+                  setHandoverForm({ ...handoverForm, checklistPassed: !!checked })
                 }
-                className="rounded"
               />
               <span className="text-sm">Handover checklist passed</span>
             </label>
             <label className="flex items-center gap-3 cursor-pointer">
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={handoverForm.credentialsPassed}
-                onChange={(e) =>
-                  setHandoverForm({ ...handoverForm, credentialsPassed: e.target.checked })
+                onCheckedChange={(checked) =>
+                  setHandoverForm({ ...handoverForm, credentialsPassed: !!checked })
                 }
-                className="rounded"
               />
               <span className="text-sm">Credentials passed to client</span>
             </label>
@@ -820,54 +825,45 @@ export default function DeliverableDetailPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-medium text-muted-foreground mb-1">
-                Acceptance signed by
-              </label>
-              <input
+              <Label className="text-xs mb-1 block">Acceptance signed by</Label>
+              <Input
                 type="text"
                 value={handoverForm.acceptanceSignedBy}
                 onChange={(e) =>
                   setHandoverForm({ ...handoverForm, acceptanceSignedBy: e.target.value })
                 }
                 placeholder="Client name…"
-                className="w-full px-3 py-2 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary/50"
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-muted-foreground mb-1">
-                Acceptance date
-              </label>
-              <input
+              <Label className="text-xs mb-1 block">Acceptance date</Label>
+              <Input
                 type="date"
                 value={handoverForm.acceptanceSignedAt}
                 onChange={(e) =>
                   setHandoverForm({ ...handoverForm, acceptanceSignedAt: e.target.value })
                 }
-                className="w-full px-3 py-2 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary/50"
               />
             </div>
           </div>
           <div>
-            <label className="block text-xs font-medium text-muted-foreground mb-1">
-              Warranty until (optional)
-            </label>
-            <input
+            <Label className="text-xs mb-1 block">Warranty until (optional)</Label>
+            <Input
               type="date"
               value={handoverForm.warrantyUntil}
               onChange={(e) =>
                 setHandoverForm({ ...handoverForm, warrantyUntil: e.target.value })
               }
-              className="w-full px-3 py-2 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary/50"
             />
           </div>
 
-          <button
+          <Button
             onClick={handleSaveHandover}
             disabled={savingHandover}
-            className="px-4 py-2 text-sm font-medium bg-pink-500 hover:bg-pink-600 text-white rounded-md transition-colors disabled:opacity-50"
+            size="sm"
           >
             {savingHandover ? "Saving…" : "Save Handover"}
-          </button>
+          </Button>
 
           {!(
             handoverForm.checklistPassed &&
@@ -883,13 +879,19 @@ export default function DeliverableDetailPage() {
 
       {/* Assets */}
       <div className="surface rounded-xl p-5 space-y-4">
-        <div className="flex items-center gap-2">
-          <Paperclip className="w-4 h-4 text-muted-foreground" />
-          <h2 className="text-sm font-semibold">Versioned Assets</h2>
-          {deliverable.assets.length > 0 && (
-            <span className="text-xs text-muted-foreground">({deliverable.assets.length})</span>
-          )}
-        </div>
+        <SectionHeader
+          title="Versioned Assets"
+          actions={
+            deliverable.assets.length > 0 ? (
+              <div className="flex items-center gap-1">
+                <Paperclip className="w-4 h-4 text-muted-foreground" />
+                <span className="text-xs text-muted-foreground">({deliverable.assets.length})</span>
+              </div>
+            ) : (
+              <Paperclip className="w-4 h-4 text-muted-foreground" />
+            )
+          }
+        />
 
         {deliverable.assets.length > 0 && (
           <div className="space-y-1.5">
@@ -910,12 +912,14 @@ export default function DeliverableDetailPage() {
                 >
                   <ExternalLink className="w-3.5 h-3.5" />
                 </a>
-                <button
+                <Button
                   onClick={() => handleDeleteAsset(asset.id)}
-                  className="text-muted-foreground/40 hover:text-rose-500 transition-colors shrink-0"
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6 text-muted-foreground/40 hover:text-rose-500 shrink-0"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
-                </button>
+                </Button>
               </div>
             ))}
           </div>
@@ -923,52 +927,51 @@ export default function DeliverableDetailPage() {
 
         <form onSubmit={handleAddAsset} className="grid grid-cols-[1fr_auto_2fr_auto] gap-2 items-end">
           <div>
-            <label className="block text-[10px] font-medium text-muted-foreground mb-1">Label</label>
-            <input
+            <Label className="text-[10px] mb-1 block">Label</Label>
+            <Input
               type="text"
               value={assetForm.label}
               onChange={(e) => setAssetForm({ ...assetForm, label: e.target.value })}
               placeholder="Logo files"
-              className="w-full px-2 py-1.5 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary/50"
+              className="h-8 text-sm px-2"
             />
           </div>
           <div>
-            <label className="block text-[10px] font-medium text-muted-foreground mb-1">Version</label>
-            <input
+            <Label className="text-[10px] mb-1 block">Version</Label>
+            <Input
               type="text"
               value={assetForm.version}
               onChange={(e) => setAssetForm({ ...assetForm, version: e.target.value })}
               placeholder="v3"
-              className="w-20 px-2 py-1.5 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary/50"
+              className="w-20 h-8 text-sm px-2"
             />
           </div>
           <div>
-            <label className="block text-[10px] font-medium text-muted-foreground mb-1">URL</label>
-            <input
+            <Label className="text-[10px] mb-1 block">URL</Label>
+            <Input
               type="url"
               value={assetForm.url}
               onChange={(e) => setAssetForm({ ...assetForm, url: e.target.value })}
               placeholder="https://drive.google.com/…"
-              className="w-full px-2 py-1.5 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary/50"
+              className="h-8 text-sm px-2"
             />
           </div>
-          <button
+          <Button
             type="submit"
             disabled={!assetForm.label || !assetForm.version || !assetForm.url || addingAsset}
-            className="px-3 py-1.5 text-sm font-medium bg-primary hover:bg-primary/90 text-primary-foreground rounded-md transition-colors disabled:opacity-50 flex items-center gap-1.5"
+            size="sm"
+            className="h-8"
           >
             <Plus className="w-3.5 h-3.5" />
             Add
-          </button>
+          </Button>
         </form>
       </div>
 
       {/* Stage events */}
       {deliverable.stageEvents.length > 0 && (
         <div>
-          <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground/50 mb-3">
-            Stage History
-          </h2>
+          <SectionHeader title="Stage History" className="mb-3" />
           <div className="space-y-1.5">
             {deliverable.stageEvents.map((ev) => (
               <div key={ev.id} className="flex items-center gap-3 text-xs text-muted-foreground">
@@ -997,6 +1000,6 @@ export default function DeliverableDetailPage() {
           </div>
         </div>
       )}
-    </div>
+    </ContentShell>
   );
 }

@@ -150,7 +150,7 @@ export function Sidebar() {
           <div className={cn(!sidebarCollapsed && "relative")}>
             {/* Vertical rail */}
             {!sidebarCollapsed && (
-              <div className="absolute left-[21px] top-3 bottom-3 w-px bg-sidebar-border" />
+              <div className="absolute left-[18px] top-3 bottom-3 w-px bg-sidebar-border" />
             )}
             <div className="space-y-px">
               {PIPELINE_STEPS.map((step) => {

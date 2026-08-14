@@ -5,6 +5,10 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { FolderKanban, ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ContentShell } from "@/components/webapp/ContentShell";
+import { PageHeader } from "@/components/webapp/PageHeader";
+import { EmptyState } from "@/components/webapp/EmptyState";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type ProjectStatus = "ACTIVE" | "DONE";
 
@@ -48,17 +52,12 @@ export default function ProjectsPage() {
   const activeCount = projects.filter((p) => p.status === "ACTIVE").length;
 
   return (
-    <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-6">
+    <ContentShell maxWidth="xl" className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight flex items-center gap-2">
-          <FolderKanban className="w-6 h-6 text-emerald-500" />
-          Projects
-        </h1>
-        <p className="text-sm text-muted-foreground mt-0.5">
-          {activeCount} active project{activeCount !== 1 ? "s" : ""} in production
-        </p>
-      </div>
+      <PageHeader
+        title="Projects"
+        description={`${activeCount} active project${activeCount !== 1 ? "s" : ""} in production`}
+      />
 
       {/* Tabs */}
       <div className="flex gap-1 border-b border-border">
@@ -91,17 +90,15 @@ export default function ProjectsPage() {
       {loading ? (
         <div className="space-y-2">
           {[...Array(5)].map((_, i) => (
-            <div key={i} className="surface rounded-lg h-16 animate-pulse" />
+            <Skeleton key={i} className="h-16 rounded-lg" />
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="surface rounded-xl p-12 text-center">
-          <FolderKanban className="w-8 h-8 text-muted-foreground/30 mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground">No projects yet</p>
-          <p className="text-xs text-muted-foreground mt-1">
-            Projects are created from won deals
-          </p>
-        </div>
+        <EmptyState
+          icon={<FolderKanban />}
+          title="No projects yet"
+          description="Projects are created from won deals"
+        />
       ) : (
         <div className="space-y-1.5">
           {filtered.map((project) => (
@@ -147,6 +144,6 @@ export default function ProjectsPage() {
           ))}
         </div>
       )}
-    </div>
+    </ContentShell>
   );
 }

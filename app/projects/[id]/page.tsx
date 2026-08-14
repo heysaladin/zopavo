@@ -4,9 +4,20 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { format } from "date-fns";
-import { ArrowLeft, Plus, X, ChevronRight } from "lucide-react";
+import { Plus, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { STAGE_PATHS } from "@/lib/stage-gates";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Skeleton } from "@/components/ui/skeleton";
+import { PageHeader } from "@/components/webapp/PageHeader";
+import { ContentShell } from "@/components/webapp/ContentShell";
+import { EmptyState } from "@/components/webapp/EmptyState";
+import { SectionHeader } from "@/components/webapp/SectionHeader";
+import { NavBreadcrumb } from "@/components/webapp/NavBreadcrumb";
 
 type DeliverableType = "BRANDING" | "ILLUSTRATION" | "GRAPHIC" | "WEB_APP";
 type SubUnit = "HIKARI" | "DRAVENCLAW" | "THINKSOFT" | "MITAYANI";
@@ -176,70 +187,52 @@ export default function ProjectDetailPage() {
 
   if (loading) {
     return (
-      <div className="p-8 max-w-5xl mx-auto space-y-4">
-        <div className="h-8 w-48 bg-muted rounded animate-pulse" />
-        <div className="surface rounded-xl h-40 animate-pulse" />
-      </div>
+      <ContentShell maxWidth="xl" className="space-y-8">
+        <Skeleton className="h-8 w-48" />
+        <Skeleton className="h-40 w-full rounded-xl" />
+      </ContentShell>
     );
   }
 
   if (!project) {
     return (
-      <div className="p-8 max-w-5xl mx-auto">
-        <Link href="/projects" className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1 mb-4">
-          <ArrowLeft className="w-4 h-4" /> Projects
-        </Link>
-        <p className="text-sm text-muted-foreground">Project not found.</p>
-      </div>
+      <ContentShell maxWidth="xl">
+        <NavBreadcrumb items={[{ label: "Projects", href: "/projects" }]} />
+        <p className="text-sm text-muted-foreground mt-4">Project not found.</p>
+      </ContentShell>
     );
   }
 
   return (
-    <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-8">
-      {/* Back */}
-      <Link
-        href="/projects"
-        className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1 w-fit"
+    <ContentShell maxWidth="xl" className="space-y-8">
+      <NavBreadcrumb items={[{ label: "Projects", href: "/projects" }, { label: project.name }]} />
+
+      {/* Status badge */}
+      <span
+        className={cn(
+          "inline-flex px-2 py-0.5 text-[10px] font-medium rounded-full",
+          project.status === "DONE"
+            ? "bg-muted text-muted-foreground"
+            : "bg-emerald-500/10 text-emerald-500"
+        )}
       >
-        <ArrowLeft className="w-4 h-4" />
-        Projects
-      </Link>
+        {project.status}
+      </span>
 
       {/* Header */}
-      <div className="flex items-start justify-between gap-3 flex-wrap">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-semibold tracking-tight">{project.name}</h1>
-            <span
-              className={cn(
-                "px-2 py-0.5 text-[10px] font-medium rounded-full",
-                project.status === "DONE"
-                  ? "bg-muted text-muted-foreground"
-                  : "bg-emerald-500/10 text-emerald-500"
-              )}
-            >
-              {project.status}
-            </span>
-          </div>
-          <p className="text-sm text-muted-foreground mt-0.5">
-            {project.client.name}
-            {project.client.company && ` · ${project.client.company}`}
-          </p>
-        </div>
-        <button
-          onClick={() => setDeliverableModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-medium rounded-md transition-colors"
-        >
-          <Plus className="w-4 h-4" />
-          Add Deliverable
-        </button>
-      </div>
+      <PageHeader
+        title={project.name}
+        description={`${project.client.name}${project.client.company ? ` · ${project.client.company}` : ""}`}
+        actions={
+          <Button onClick={() => setDeliverableModal(true)}>
+            <Plus className="w-4 h-4 mr-1" /> Add Deliverable
+          </Button>
+        }
+      />
 
       {/* Deal info */}
       <div className="surface rounded-xl p-4 space-y-2">
-        <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground/50 mb-3">
-          Deal
-        </h2>
+        <SectionHeader title="Deal" className="mb-3" />
         <p className="text-sm">{project.deal.scopeSummary}</p>
         <div className="flex items-center gap-4 flex-wrap mt-2">
           <span className="text-sm font-medium">
@@ -263,19 +256,12 @@ export default function ProjectDetailPage() {
 
       {/* Deliverables */}
       <div>
-        <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground/50 mb-3">
-          Deliverables ({project.deliverables.length})
-        </h2>
+        <SectionHeader title={`Deliverables (${project.deliverables.length})`} className="mb-3" />
         {project.deliverables.length === 0 ? (
-          <div className="surface rounded-xl p-8 text-center">
-            <p className="text-sm text-muted-foreground">No deliverables yet</p>
-            <button
-              onClick={() => setDeliverableModal(true)}
-              className="text-xs text-primary hover:text-primary/80 mt-1 inline-block"
-            >
-              Add first deliverable →
-            </button>
-          </div>
+          <EmptyState
+            title="No deliverables yet"
+            action={{ label: "Add first deliverable", onClick: () => setDeliverableModal(true) }}
+          />
         ) : (
           <div className="space-y-2">
             {project.deliverables.map((d) => {
@@ -354,9 +340,7 @@ export default function ProjectDetailPage() {
       {/* Milestones */}
       {project.milestones.length > 0 && (
         <div>
-          <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground/50 mb-3">
-            Milestones
-          </h2>
+          <SectionHeader title="Milestones" className="mb-3" />
           <div className="space-y-2">
             {project.milestones.map((m) => (
               <div key={m.id} className="surface rounded-lg px-4 py-3 flex items-center gap-3">
@@ -399,9 +383,7 @@ export default function ProjectDetailPage() {
       {/* Stage events */}
       {project.stageEvents.length > 0 && (
         <div>
-          <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground/50 mb-3">
-            Activity
-          </h2>
+          <SectionHeader title="Activity" className="mb-3" />
           <div className="space-y-1.5">
             {project.stageEvents.slice(0, 10).map((ev) => (
               <div key={ev.id} className="flex items-center gap-3 text-xs text-muted-foreground">
@@ -429,89 +411,90 @@ export default function ProjectDetailPage() {
         </div>
       )}
 
-      {/* Add Deliverable Modal */}
-      {deliverableModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-          <div className="bg-background border border-border rounded-xl w-full max-w-sm shadow-xl">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-border">
-              <h2 className="text-base font-semibold">Add Deliverable</h2>
-              <button
-                onClick={() => { setDeliverableModal(false); setDeliverableForm(EMPTY_DELIVERABLE_FORM); }}
-                className="p-1 rounded-md hover:bg-accent text-muted-foreground transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
+      {/* Add Deliverable Dialog */}
+      <Dialog
+        open={deliverableModal}
+        onOpenChange={(open) => {
+          if (!open) {
+            setDeliverableModal(false);
+            setDeliverableForm(EMPTY_DELIVERABLE_FORM);
+          }
+        }}
+      >
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Add Deliverable</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleAddDeliverable} className="space-y-4 mt-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="deliverable-name">Name *</Label>
+              <Input
+                id="deliverable-name"
+                type="text"
+                required
+                value={deliverableForm.name}
+                onChange={(e) => setDeliverableForm({ ...deliverableForm, name: e.target.value })}
+                placeholder="e.g. Logo Design"
+              />
             </div>
-            <form onSubmit={handleAddDeliverable} className="px-5 py-4 space-y-4">
-              <div>
-                <label className="block text-xs font-medium text-muted-foreground mb-1">
-                  Name *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={deliverableForm.name}
-                  onChange={(e) => setDeliverableForm({ ...deliverableForm, name: e.target.value })}
-                  placeholder="e.g. Logo Design"
-                  className="w-full px-3 py-2 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary/50"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-muted-foreground mb-1">
-                  Type *
-                </label>
-                <select
-                  value={deliverableForm.type}
-                  onChange={(e) =>
-                    setDeliverableForm({ ...deliverableForm, type: e.target.value as DeliverableType })
-                  }
-                  className="w-full px-3 py-2 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary/50"
-                >
+            <div className="space-y-1.5">
+              <Label htmlFor="deliverable-type">Type *</Label>
+              <Select
+                value={deliverableForm.type}
+                onValueChange={(value) =>
+                  setDeliverableForm({ ...deliverableForm, type: value as DeliverableType })
+                }
+              >
+                <SelectTrigger id="deliverable-type">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
                   {DELIVERABLE_TYPES.map((t) => (
-                    <option key={t} value={t}>
+                    <SelectItem key={t} value={t}>
                       {t.replace("_", " ")}
-                    </option>
+                    </SelectItem>
                   ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-muted-foreground mb-1">
-                  Sub-Unit *
-                </label>
-                <select
-                  value={deliverableForm.subUnit}
-                  onChange={(e) =>
-                    setDeliverableForm({ ...deliverableForm, subUnit: e.target.value as SubUnit })
-                  }
-                  className="w-full px-3 py-2 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary/50"
-                >
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="deliverable-subunit">Sub-Unit *</Label>
+              <Select
+                value={deliverableForm.subUnit}
+                onValueChange={(value) =>
+                  setDeliverableForm({ ...deliverableForm, subUnit: value as SubUnit })
+                }
+              >
+                <SelectTrigger id="deliverable-subunit">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
                   {SUB_UNITS.map((u) => (
-                    <option key={u} value={u}>
+                    <SelectItem key={u} value={u}>
                       {u}
-                    </option>
+                    </SelectItem>
                   ))}
-                </select>
-              </div>
-              <div className="flex items-center justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => { setDeliverableModal(false); setDeliverableForm(EMPTY_DELIVERABLE_FORM); }}
-                  className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="px-4 py-2 text-sm font-medium bg-primary hover:bg-primary/90 text-primary-foreground rounded-md transition-colors disabled:opacity-50"
-                >
-                  {submitting ? "Adding…" : "Add Deliverable"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-    </div>
+                </SelectContent>
+              </Select>
+            </div>
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => {
+                  setDeliverableModal(false);
+                  setDeliverableForm(EMPTY_DELIVERABLE_FORM);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={submitting}>
+                {submitting ? "Adding…" : "Add Deliverable"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </ContentShell>
   );
 }

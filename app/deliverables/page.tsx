@@ -6,6 +6,10 @@ import { useSearchParams } from "next/navigation";
 import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PIPELINE_STEPS } from "@/lib/pipeline";
+import { ContentShell } from "@/components/webapp/ContentShell";
+import { PageHeader } from "@/components/webapp/PageHeader";
+import { EmptyState } from "@/components/webapp/EmptyState";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type DeliverableStage = "DESIGN" | "APPROVAL" | "DEVELOPMENT" | "QC" | "HANDOVER" | "DONE";
 
@@ -73,14 +77,8 @@ function DeliverablesContent() {
   const title = stage ? `${stage.charAt(0) + stage.slice(1).toLowerCase()} — Deliverables` : "All Deliverables";
 
   return (
-    <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
-        <p className="text-sm text-muted-foreground mt-0.5">
-          {deliverables.length} deliverable{deliverables.length !== 1 ? "s" : ""}
-          {stage && ` in ${stage} stage`}
-        </p>
-      </div>
+    <ContentShell maxWidth="xl" className="space-y-6">
+      <PageHeader title={title} description={`${deliverables.length} deliverable${deliverables.length !== 1 ? "s" : ""}${stage ? ` in ${stage} stage` : ""}`} />
 
       {/* Stage filter links */}
       <div className="flex gap-2 flex-wrap">
@@ -114,15 +112,11 @@ function DeliverablesContent() {
       {loading ? (
         <div className="space-y-2">
           {[...Array(5)].map((_, i) => (
-            <div key={i} className="surface rounded-lg h-16 animate-pulse" />
+            <Skeleton key={i} className="h-16 rounded-lg" />
           ))}
         </div>
       ) : deliverables.length === 0 ? (
-        <div className="surface rounded-xl p-12 text-center">
-          <p className="text-sm text-muted-foreground">
-            No deliverables {stage ? `in ${stage} stage` : "yet"}
-          </p>
-        </div>
+        <EmptyState title={`No deliverables${stage ? ` in ${stage} stage` : " yet"}`} />
       ) : (
         <div className="space-y-1.5">
           {deliverables.map((d) => (
@@ -158,7 +152,7 @@ function DeliverablesContent() {
           ))}
         </div>
       )}
-    </div>
+    </ContentShell>
   );
 }
 

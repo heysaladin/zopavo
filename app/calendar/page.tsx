@@ -1,5 +1,7 @@
 import { db } from "@/lib/db";
 import { CalendarClient } from "./calendar-client";
+import { PageHeader } from "@/components/webapp/PageHeader";
+import { ContentShell } from "@/components/webapp/ContentShell";
 
 export const dynamic = "force-dynamic";
 
@@ -15,12 +17,9 @@ export default async function CalendarPage() {
   }
 
   return (
-    <div className="p-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-foreground tracking-tight">Calendar</h1>
-        <p className="text-sm text-muted-foreground mt-0.5">Your scheduled content at a glance</p>
-      </div>
+    <ContentShell maxWidth="full" className="space-y-6">
+      <PageHeader title="Calendar" description="Your scheduled content at a glance" />
       <CalendarClient posts={posts as any} />
-    </div>
+    </ContentShell>
   );
 }

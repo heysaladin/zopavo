@@ -6,6 +6,9 @@ import { format } from "date-fns";
 import { ChevronRight, ArrowUpRight, Inbox, FolderKanban } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PIPELINE_STEPS, stepNum } from "@/lib/pipeline";
+import { ContentShell } from "@/components/webapp/ContentShell";
+import { PageHeader } from "@/components/webapp/PageHeader";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type EnquiryStatus = "NEW" | "REPLIED" | "QUALIFIED" | "CLOSED";
 
@@ -87,14 +90,9 @@ export default function DashboardPage() {
   }, []);
 
   return (
-    <div className="p-4 md:p-8 max-w-6xl mx-auto space-y-8">
+    <ContentShell maxWidth="xl" className="space-y-8">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
-        <p className="text-sm text-muted-foreground mt-0.5">
-          Hyperfantasy studio — 8-stage pipeline overview
-        </p>
-      </div>
+      <PageHeader title="Dashboard" description="Hyperfantasy studio — 8-stage pipeline overview" />
 
       {/* Pipeline funnel */}
       <div>
@@ -155,7 +153,7 @@ export default function DashboardPage() {
           {loading ? (
             <div className="space-y-2">
               {[...Array(3)].map((_, i) => (
-                <div key={i} className="surface rounded-lg h-14 animate-pulse" />
+                <Skeleton key={i} className="h-14 rounded-lg" />
               ))}
             </div>
           ) : recentEnquiries.length === 0 ? (
@@ -207,7 +205,7 @@ export default function DashboardPage() {
           {loading ? (
             <div className="space-y-2">
               {[...Array(3)].map((_, i) => (
-                <div key={i} className="surface rounded-lg h-14 animate-pulse" />
+                <Skeleton key={i} className="h-14 rounded-lg" />
               ))}
             </div>
           ) : activeProjects.length === 0 ? (
@@ -247,6 +245,6 @@ export default function DashboardPage() {
           )}
         </div>
       </div>
-    </div>
+    </ContentShell>
   );
 }

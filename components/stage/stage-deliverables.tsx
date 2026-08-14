@@ -5,6 +5,8 @@ import { db } from "@/lib/db";
 import { type StepId } from "@/lib/pipeline";
 import { readPhaseDocs } from "@/lib/phase-docs";
 import { PhaseFileBrowser } from "@/components/docs/phase-file-browser";
+import { SectionHeader } from "@/components/webapp/SectionHeader";
+import { EmptyState } from "@/components/webapp/EmptyState";
 
 type DeliverableStage = "DESIGN" | "APPROVAL" | "DEVELOPMENT" | "QC" | "HANDOVER" | "DONE";
 
@@ -36,24 +38,20 @@ export async function StageDeliverables({ stage, stepId, phaseDir }: Props) {
     <div className="flex flex-col flex-1 min-h-0">
       {/* Live deliverables section */}
       <div className="p-4 md:p-6 border-b border-border space-y-4">
-        <div className="flex items-center gap-2">
-          <h2 className="text-sm font-semibold">
-            Live in{" "}
-            <span className={cn("px-2 py-0.5 rounded-full text-xs font-medium", STAGE_COLORS[stage])}>
-              {stage}
+        <SectionHeader
+          title="Live deliverables"
+          actions={
+            <span className="text-xs text-muted-foreground">
+              {deliverables.length} deliverable{deliverables.length !== 1 ? "s" : ""}
             </span>
-          </h2>
-          <span className="text-xs text-muted-foreground ml-auto">
-            {deliverables.length} deliverable{deliverables.length !== 1 ? "s" : ""}
-          </span>
-        </div>
+          }
+        />
+        <span className={cn("inline-flex px-2 py-0.5 rounded-full text-xs font-medium", STAGE_COLORS[stage])}>
+          {stage}
+        </span>
 
         {deliverables.length === 0 ? (
-          <div className="surface rounded-xl p-10 text-center">
-            <p className="text-sm text-muted-foreground">
-              No deliverables currently in {stage} stage
-            </p>
-          </div>
+          <EmptyState title={`No deliverables currently in ${stage} stage`} />
         ) : (
           <div className="space-y-1.5">
             {deliverables.map((d) => (

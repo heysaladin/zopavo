@@ -2,8 +2,18 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { format } from "date-fns";
-import { Plus, X, FileSignature } from "lucide-react";
+import { Plus, FileSignature } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Skeleton } from "@/components/ui/skeleton";
+import { PageHeader } from "@/components/webapp/PageHeader";
+import { ContentShell } from "@/components/webapp/ContentShell";
+import { EmptyState } from "@/components/webapp/EmptyState";
 
 type DealOutcome = "OPEN" | "WON" | "LOST";
 type LostReason = "PRICE" | "TIMELINE" | "SCOPE" | "COMPETITOR" | "GHOSTED" | "OTHER";
@@ -192,26 +202,18 @@ export default function DealsPage() {
   }
 
   return (
-    <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-6">
+    <ContentShell maxWidth="xl" className="space-y-6">
       {/* Header */}
-      <div className="flex items-start justify-between gap-3 flex-wrap">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight flex items-center gap-2">
-            <FileSignature className="w-6 h-6 text-cyan-500" />
-            Deals
-          </h1>
-          <p className="text-sm text-muted-foreground mt-0.5">
-            Proposals, quotes and contracts
-          </p>
-        </div>
-        <button
-          onClick={() => setModalOpen(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-medium rounded-md transition-colors"
-        >
-          <Plus className="w-4 h-4" />
-          New Deal
-        </button>
-      </div>
+      <PageHeader
+        title="Deals"
+        description="Proposals, quotes and contracts"
+        actions={
+          <Button onClick={() => setModalOpen(true)}>
+            <Plus className="w-4 h-4 mr-1" />
+            New Deal
+          </Button>
+        }
+      />
 
       {/* Tabs */}
       <div className="flex gap-1 border-b border-border">
@@ -244,14 +246,11 @@ export default function DealsPage() {
       {loading ? (
         <div className="space-y-2">
           {[...Array(5)].map((_, i) => (
-            <div key={i} className="surface rounded-lg h-20 animate-pulse" />
+            <Skeleton key={i} className="h-20 rounded-lg" />
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="surface rounded-xl p-12 text-center">
-          <FileSignature className="w-8 h-8 text-muted-foreground/30 mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground">No deals here</p>
-        </div>
+        <EmptyState icon={<FileSignature />} title="No deals here" />
       ) : (
         <div className="space-y-2">
           {filtered.map((deal) => (
@@ -298,29 +297,27 @@ export default function DealsPage() {
               <div className="flex items-center gap-2 flex-wrap">
                 {deal.outcome === "OPEN" && (
                   <>
-                    <button
-                      onClick={() => handleWon(deal.id)}
-                      className="px-2.5 py-1 text-xs rounded-md bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 transition-colors"
-                    >
+                    <Button variant="outline" size="sm" onClick={() => handleWon(deal.id)}>
                       Mark Won
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-rose-500 hover:text-rose-600"
                       onClick={() => setLostModal({ id: deal.id })}
-                      className="px-2.5 py-1 text-xs rounded-md hover:bg-rose-500/10 text-muted-foreground hover:text-rose-500 transition-colors"
                     >
                       Mark Lost
-                    </button>
+                    </Button>
                   </>
                 )}
                 {deal.outcome === "WON" && !deal.project && (
-                  <button
-                    onClick={() =>
-                      setProjectModal({ dealId: deal.id, clientId: deal.client.id })
-                    }
-                    className="px-2.5 py-1 text-xs rounded-md bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 transition-colors"
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setProjectModal({ dealId: deal.id, clientId: deal.client.id })}
                   >
                     Create Project
-                  </button>
+                  </Button>
                 )}
                 {deal.outcome === "WON" && deal.project && (
                   <span className="text-[11px] text-muted-foreground/60">Project created</span>
@@ -337,232 +334,159 @@ export default function DealsPage() {
       )}
 
       {/* New Deal Modal */}
-      {modalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-          <div className="bg-background border border-border rounded-xl w-full max-w-md shadow-xl max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-border">
-              <h2 className="text-base font-semibold">New Deal</h2>
-              <button
-                onClick={() => { setModalOpen(false); setForm(EMPTY_FORM); }}
-                className="p-1 rounded-md hover:bg-accent text-muted-foreground transition-colors"
+      <Dialog open={modalOpen} onOpenChange={(open) => { if (!open) { setModalOpen(false); setForm(EMPTY_FORM); } }}>
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+          <DialogHeader><DialogTitle>New Deal</DialogTitle></DialogHeader>
+          <form onSubmit={handleCreate} className="space-y-4 mt-4">
+            <div className="space-y-2">
+              <Label>Enquiry (Qualified) *</Label>
+              <Select
+                required
+                value={form.enquiryId}
+                onValueChange={(value) => setForm({ ...form, enquiryId: value })}
               >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-            <form onSubmit={handleCreate} className="px-5 py-4 space-y-4">
-              <div>
-                <label className="block text-xs font-medium text-muted-foreground mb-1">
-                  Enquiry (Qualified) *
-                </label>
-                <select
-                  required
-                  value={form.enquiryId}
-                  onChange={(e) => setForm({ ...form, enquiryId: e.target.value })}
-                  className="w-full px-3 py-2 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary/50"
-                >
-                  <option value="">Select enquiry…</option>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select enquiry…" />
+                </SelectTrigger>
+                <SelectContent>
                   {qualifiedEnquiries.map((eq) => (
-                    <option key={eq.id} value={eq.id}>
+                    <SelectItem key={eq.id} value={eq.id}>
                       {eq.contactName}{eq.contactEmail ? ` (${eq.contactEmail})` : ""}
-                    </option>
+                    </SelectItem>
                   ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-muted-foreground mb-1">
-                  Client ID *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={form.clientId}
-                  onChange={(e) => setForm({ ...form, clientId: e.target.value })}
-                  placeholder="Client cuid…"
-                  className="w-full px-3 py-2 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary/50"
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Client ID *</Label>
+              <Input
+                type="text"
+                required
+                value={form.clientId}
+                onChange={(e) => setForm({ ...form, clientId: e.target.value })}
+                placeholder="Client cuid…"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Scope Summary *</Label>
+              <Textarea
+                required
+                rows={3}
+                value={form.scopeSummary}
+                onChange={(e) => setForm({ ...form, scopeSummary: e.target.value })}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <Label>Value</Label>
+                <Input
+                  type="number"
+                  value={form.value}
+                  onChange={(e) => setForm({ ...form, value: e.target.value })}
                 />
               </div>
-              <div>
-                <label className="block text-xs font-medium text-muted-foreground mb-1">
-                  Scope Summary *
-                </label>
-                <textarea
-                  required
-                  rows={3}
-                  value={form.scopeSummary}
-                  onChange={(e) => setForm({ ...form, scopeSummary: e.target.value })}
-                  className="w-full px-3 py-2 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary/50 resize-none"
+              <div className="space-y-2">
+                <Label>Currency</Label>
+                <Select
+                  value={form.currency}
+                  onValueChange={(value) => setForm({ ...form, currency: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="IDR">IDR</SelectItem>
+                    <SelectItem value="USD">USD</SelectItem>
+                    <SelectItem value="SGD">SGD</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <Label>Expected Close</Label>
+                <Input
+                  type="date"
+                  value={form.expectedCloseDate}
+                  onChange={(e) => setForm({ ...form, expectedCloseDate: e.target.value })}
                 />
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-medium text-muted-foreground mb-1">
-                    Value
-                  </label>
-                  <input
-                    type="number"
-                    value={form.value}
-                    onChange={(e) => setForm({ ...form, value: e.target.value })}
-                    className="w-full px-3 py-2 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary/50"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-muted-foreground mb-1">
-                    Currency
-                  </label>
-                  <select
-                    value={form.currency}
-                    onChange={(e) => setForm({ ...form, currency: e.target.value })}
-                    className="w-full px-3 py-2 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary/50"
-                  >
-                    <option value="IDR">IDR</option>
-                    <option value="USD">USD</option>
-                    <option value="SGD">SGD</option>
-                  </select>
-                </div>
+              <div className="space-y-2">
+                <Label>Revision Rounds</Label>
+                <Input
+                  type="number"
+                  min="1"
+                  max="10"
+                  value={form.agreedRevisionRounds}
+                  onChange={(e) => setForm({ ...form, agreedRevisionRounds: e.target.value })}
+                />
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-medium text-muted-foreground mb-1">
-                    Expected Close
-                  </label>
-                  <input
-                    type="date"
-                    value={form.expectedCloseDate}
-                    onChange={(e) => setForm({ ...form, expectedCloseDate: e.target.value })}
-                    className="w-full px-3 py-2 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary/50"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-muted-foreground mb-1">
-                    Revision Rounds
-                  </label>
-                  <input
-                    type="number"
-                    min="1"
-                    max="10"
-                    value={form.agreedRevisionRounds}
-                    onChange={(e) =>
-                      setForm({ ...form, agreedRevisionRounds: e.target.value })
-                    }
-                    className="w-full px-3 py-2 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary/50"
-                  />
-                </div>
-              </div>
-              <div className="flex items-center justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => { setModalOpen(false); setForm(EMPTY_FORM); }}
-                  className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="px-4 py-2 text-sm font-medium bg-primary hover:bg-primary/90 text-primary-foreground rounded-md transition-colors disabled:opacity-50"
-                >
-                  {submitting ? "Creating…" : "Create Deal"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+            </div>
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => { setModalOpen(false); setForm(EMPTY_FORM); }}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={submitting}>
+                {submitting ? "Creating…" : "Create Deal"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       {/* Lost Reason Modal */}
-      {lostModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-          <div className="bg-background border border-border rounded-xl w-full max-w-sm shadow-xl">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-border">
-              <h2 className="text-base font-semibold">Mark as Lost</h2>
-              <button
-                onClick={() => setLostModal(null)}
-                className="p-1 rounded-md hover:bg-accent text-muted-foreground transition-colors"
+      <Dialog open={!!lostModal} onOpenChange={(open) => { if (!open) setLostModal(null); }}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader><DialogTitle>Mark as Lost</DialogTitle></DialogHeader>
+          <div className="space-y-4 mt-4">
+            <div className="space-y-2">
+              <Label>Lost Reason</Label>
+              <Select
+                value={lostReason}
+                onValueChange={(value) => setLostReason(value as LostReason)}
               >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-            <div className="px-5 py-4 space-y-4">
-              <div>
-                <label className="block text-xs font-medium text-muted-foreground mb-1">
-                  Lost Reason
-                </label>
-                <select
-                  value={lostReason}
-                  onChange={(e) => setLostReason(e.target.value as LostReason)}
-                  className="w-full px-3 py-2 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary/50"
-                >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
                   {LOST_REASONS.map((r) => (
-                    <option key={r} value={r}>
-                      {r}
-                    </option>
+                    <SelectItem key={r} value={r}>{r}</SelectItem>
                   ))}
-                </select>
-              </div>
-              <div className="flex items-center justify-end gap-2">
-                <button
-                  onClick={() => setLostModal(null)}
-                  className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() => handleLost(lostModal.id)}
-                  className="px-4 py-2 text-sm font-medium bg-rose-500 hover:bg-rose-600 text-white rounded-md transition-colors"
-                >
-                  Confirm Lost
-                </button>
-              </div>
+                </SelectContent>
+              </Select>
             </div>
           </div>
-        </div>
-      )}
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setLostModal(null)}>Cancel</Button>
+            <Button variant="destructive" onClick={() => handleLost(lostModal!.id)}>Confirm Lost</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Create Project Modal */}
-      {projectModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-          <div className="bg-background border border-border rounded-xl w-full max-w-sm shadow-xl">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-border">
-              <h2 className="text-base font-semibold">Create Project</h2>
-              <button
-                onClick={() => { setProjectModal(null); setProjectName(""); }}
-                className="p-1 rounded-md hover:bg-accent text-muted-foreground transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-            <div className="px-5 py-4 space-y-4">
-              <div>
-                <label className="block text-xs font-medium text-muted-foreground mb-1">
-                  Project Name *
-                </label>
-                <input
-                  type="text"
-                  value={projectName}
-                  onChange={(e) => setProjectName(e.target.value)}
-                  placeholder="e.g. Brand Identity for Acme"
-                  className="w-full px-3 py-2 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary/50"
-                />
-              </div>
-              <div className="flex items-center justify-end gap-2">
-                <button
-                  onClick={() => { setProjectModal(null); setProjectName(""); }}
-                  className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleCreateProject}
-                  disabled={!projectName}
-                  className="px-4 py-2 text-sm font-medium bg-primary hover:bg-primary/90 text-primary-foreground rounded-md transition-colors disabled:opacity-50"
-                >
-                  Create Project
-                </button>
-              </div>
+      <Dialog open={!!projectModal} onOpenChange={(open) => { if (!open) { setProjectModal(null); setProjectName(""); } }}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader><DialogTitle>Create Project</DialogTitle></DialogHeader>
+          <div className="space-y-4 mt-4">
+            <div className="space-y-2">
+              <Label>Project Name *</Label>
+              <Input
+                value={projectName}
+                onChange={(e) => setProjectName(e.target.value)}
+                placeholder="e.g. Brand Identity for Acme"
+              />
             </div>
           </div>
-        </div>
-      )}
-    </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => { setProjectModal(null); setProjectName(""); }}>Cancel</Button>
+            <Button onClick={handleCreateProject} disabled={!projectName}>Create Project</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </ContentShell>
   );
 }
