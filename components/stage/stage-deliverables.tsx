@@ -30,7 +30,7 @@ export async function StageDeliverables({ stage, stepId, phaseDir }: Props) {
     where: { stage },
     include: { project: { include: { client: true } } },
     orderBy: { createdAt: "desc" },
-  });
+  }).catch(() => []);
 
   const sections = readPhaseDocs(phaseDir);
 
