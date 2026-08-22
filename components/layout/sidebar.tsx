@@ -50,6 +50,9 @@ export function Sidebar() {
   useEffect(() => setMounted(true), []);
   useEffect(() => { closeMobileMenu(); }, [pathname]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const hiddenOn = ["/login", "/board", "/colab"];
+  if (hiddenOn.some((p) => pathname === p || pathname.startsWith(p + "/"))) return null;
+
   const isDark = theme === "dark";
 
   const isActive = (href: string) => {

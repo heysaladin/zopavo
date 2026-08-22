@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { Sidebar, MobileHeader } from "@/components/layout/sidebar";
+import { Sidebar } from "@/components/layout/sidebar";
+import { AppHeader } from "@/components/layout/AppHeader";
 import { ToastProvider } from "@/components/ui/toast-provider";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 
@@ -22,7 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="flex h-screen overflow-hidden">
             <Sidebar />
             <main className="flex-1 overflow-y-auto min-w-0 h-full flex flex-col">
-              <MobileHeader />
+              <AppHeader />
               {children}
             </main>
           </div>

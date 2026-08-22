@@ -287,3 +287,21 @@ model Template {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 }
+
+enum BacklogStatus {
+  BACKLOG
+  TODO
+  IN_PROGRESS
+  REVIEW
+  DONE
+}
+
+model BacklogItem {
+  id        String        @id @default(cuid())
+  title     String
+  notes     String?
+  status    BacklogStatus @default(BACKLOG)
+  createdAt DateTime      @default(now())
+  doneAt    DateTime?
+  updatedAt DateTime      @updatedAt
+}

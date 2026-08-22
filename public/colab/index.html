@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Priority Matrix</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+
+    /* ── Board picker ───────────────────────────────────────────────────────── */
+    #board-picker-screen {
+      position: fixed; inset: 0; z-index: 400;
+      background: #f1f5f9;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 36px;
+    }
+    #board-picker-screen.hidden { display: none; }
+    .board-picker-title {
+      font-size: 13px; font-weight: 700; letter-spacing: 3px;
+      text-transform: uppercase; color: #94a3b8;
+    }
+    .board-picker-cards {
+      display: flex; gap: 20px;
+    }
+    .board-card {
+      width: 180px; height: 120px;
+      border: 1.5px solid #e2e8f0; border-radius: 12px;
+      background: #fff; cursor: pointer;
+      font-size: 16px; font-weight: 700; color: #1e293b;
+      font-family: inherit;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .board-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+    #board-pw-section {
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+    }
+    #board-pw-section.hidden { display: none; }
+    #board-pw-section .board-pw-label {
+      font-size: 12px; color: #64748b; font-weight: 600; letter-spacing: 1px;
+    }
+    #board-pw-section .board-pw-input {
+      padding: 8px 14px; border-radius: 8px; border: 1.5px solid #e2e8f0;
+      font-size: 14px; font-family: inherit; outline: none; width: 200px;
+      text-align: center; transition: border-color 0.15s;
+    }
+    #board-pw-section .board-pw-input:focus { border-color: #3b82f6; }
+    #board-pw-section .board-pw-input.error { border-color: #ef4444; }
+    #board-pw-section .board-pw-err { font-size: 11px; color: #ef4444; min-height: 14px; }
+    #board-pw-section .board-pw-btn {
+      padding: 8px 28px; border-radius: 8px; background: #3b82f6;
+      color: #fff; border: none; font-size: 13px; font-weight: 600;
+      cursor: pointer; font-family: inherit;
+    }
+    #board-pw-section .board-pw-btn:hover { background: #2563eb; }
+    .back-btn {
+      background: none; border: none; cursor: pointer;
+      font-size: 12px; color: #94a3b8; font-family: inherit;
+      padding: 6px 10px; border-radius: 6px; letter-spacing: 0.5px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .back-btn:hover { color: #475569; background: rgba(0,0,0,0.05); }
+
+    /* ── Login screen ───────────────────────────────────────────────────────── */
+    #login-screen {
+      position: fixed; inset: 0; z-index: 300;
+      background: #f1f5f9;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 32px;
+    }
+    #login-screen.hidden { display: none; }
+
+    .login-title {
+      font-size: 13px; font-weight: 700; letter-spacing: 3px;
+      text-transform: uppercase; color: #94a3b8;
+    }
+
+    .login-users {
+      display: flex; gap: 16px; align-items: flex-start;
+    }
+
+    .login-user {
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+      width: 110px;
+    }
+
+    .login-avatar {
+      width: 64px; height: 64px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; font-weight: 700; color: #fff;
+      cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;
+      border: 3px solid transparent;
+    }
+    .login-avatar:hover { transform: scale(1.07); box-shadow: 0 4px 18px rgba(0,0,0,0.15); }
+    .login-avatar.selected { border-color: rgba(0,0,0,0.25); transform: scale(1.07); }
+
+    .login-name {
+      font-size: 13px; font-weight: 600; color: #334155; text-align: center;
+    }
+
+    .login-pw-wrap {
+      display: flex; flex-direction: column; gap: 6px; width: 100%;
+    }
+    .login-pw-wrap.hidden { display: none; }
+
+    .login-pw-input {
+      width: 100%; padding: 6px 8px; border-radius: 6px;
+      border: 1.5px solid #cbd5e1; font-size: 12px; font-family: inherit;
+      outline: none; text-align: center;
+      transition: border-color 0.15s;
+    }
+    .login-pw-input:focus { border-color: #3b82f6; }
+    .login-pw-input.error { border-color: #ef4444; }
+
+    .login-pw-btn {
+      width: 100%; padding: 6px; border-radius: 6px;
+      background: #3b82f6; color: #fff; border: none;
+      font-size: 12px; font-weight: 600; cursor: pointer;
+      font-family: inherit;
+    }
+    .login-pw-btn:hover { background: #2563eb; }
+
+    .login-pw-err {
+      font-size: 11px; color: #ef4444; text-align: center;
+      min-height: 14px;
+    }
+
+    /* ── Canvas ─────────────────────────────────────────────────────────────── */
+    #canvas {
+      width: 100vw; height: 100vh; position: relative;
+    }
+
+    .quadrant {
+      position: absolute; width: 50%; height: 50%;
+      pointer-events: none; display: flex; flex-direction: column; padding: 16px;
+    }
+    .q-label-id   { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; opacity: 0.6; }
+    .q-label-name { font-size: 15px; font-weight: 700; }
+    .q-label-desc { font-size: 11px; opacity: 0.6; margin-top: 2px; }
+
+    .divider-h { position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: #cbd5e1; pointer-events: none; z-index: 1; }
+    .divider-v { position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: #cbd5e1; pointer-events: none; z-index: 1; }
+
+    #axis-x {
+      position: absolute; bottom: 10px; left: 0; right: 0;
+      text-align: center; font-size: 10px; color: #94a3b8;
+      letter-spacing: 2.5px; font-weight: 600; text-transform: uppercase;
+      pointer-events: none; z-index: 2;
+    }
+    #axis-y {
+      position: absolute; left: 10px; top: 50%;
+      transform: translateY(-50%) rotate(-90deg);
+      font-size: 10px; color: #94a3b8; letter-spacing: 2.5px;
+      font-weight: 600; text-transform: uppercase;
+      pointer-events: none; z-index: 2; white-space: nowrap;
+    }
+    #title {
+      position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
+      font-size: 11px; font-weight: 700; color: #94a3b8;
+      letter-spacing: 3px; text-transform: uppercase;
+      z-index: 2; pointer-events: none; white-space: nowrap;
+      background: rgba(248,250,252,0.9); padding: 4px 10px; border-radius: 4px;
+    }
+
+    /* ── Session bar ────────────────────────────────────────────────────────── */
+    #session-bar {
+      position: fixed; top: 12px; right: 16px;
+      display: flex; align-items: center; gap: 10px; z-index: 51;
+    }
+    #session-bar.hidden { display: none; }
+    .session-name {
+      font-size: 11px; font-weight: 600; color: #64748b;
+      background: rgba(248,250,252,0.9); padding: 4px 10px; border-radius: 20px;
+      letter-spacing: 0.5px;
+    }
+    .logout-btn {
+      font-size: 11px; color: #94a3b8; background: none; border: none;
+      cursor: pointer; padding: 4px 6px; border-radius: 4px;
+      font-family: inherit;
+    }
+    .logout-btn:hover { color: #ef4444; background: rgba(239,68,68,0.06); }
+
+    /* ── Sticky note ────────────────────────────────────────────────────────── */
+    .note {
+      position: absolute; width: 172px; min-height: 144px;
+      border-radius: 6px; padding: 6px 10px 10px;
+      box-shadow: 2px 4px 18px rgba(0,0,0,0.14);
+      z-index: 10; font-size: 13px;
+      display: flex; flex-direction: column; gap: 6px;
+      user-select: none;
+    }
+    .note.dragging { z-index: 50; box-shadow: 4px 8px 28px rgba(0,0,0,0.22); }
+
+    .note-header {
+      cursor: grab; color: rgba(0,0,0,0.3);
+      font-size: 11px; letter-spacing: 3px; text-align: center;
+      padding-bottom: 2px;
+    }
+    .note-header:active { cursor: grabbing; }
+    .note-left-icons { display: flex; align-items: center; gap: 2px; }
+
+    .working-avatar {
+      position: absolute; top: -30px; right: -30px;
+      width: 76px; height: 76px;
+      overflow: visible;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 30; pointer-events: none;
+      animation: pop-in 0.2s cubic-bezier(0.175,0.885,0.32,1.275) both;
+    }
+    .cookie-ring {
+      position: absolute;
+      width: 118%; height: 118%;
+      top: 50%; left: 50%;
+      transform-origin: center center;
+      animation: cookie-spin-centered 5s linear infinite;
+    }
+    @keyframes cookie-spin-centered {
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to   { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+    .working-avatar img {
+      width: 48px; height: 48px; border-radius: 50%;
+      object-fit: cover; display: block;
+      position: relative; z-index: 1; flex-shrink: 0;
+    }
+    .working-avatar .avatar-initials {
+      width: 48px; height: 48px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; color: #fff;
+      position: relative; z-index: 1; flex-shrink: 0;
+    }
+    @keyframes cookie-spin { to { transform: rotate(360deg); } }
+
+    /* ── Small screen warning ────────────────────────────────────────────────── */
+    #small-screen-warning {
+      display: none;
+      position: fixed; inset: 0; z-index: 9999;
+      background: #0f172a;
+      flex-direction: column; align-items: center; justify-content: center;
+      gap: 16px; padding: 32px; text-align: center;
+    }
+    #small-screen-warning .warn-icon { font-size: 56px; line-height: 1; }
+    #small-screen-warning .warn-title {
+      font-size: 22px; font-weight: 800; color: #f1f5f9; letter-spacing: 0.5px;
+    }
+    #small-screen-warning .warn-sub {
+      font-size: 14px; color: #94a3b8; max-width: 280px; line-height: 1.6;
+    }
+    @media (max-width: 900px) {
+      #small-screen-warning { display: flex; }
+    }
+    @keyframes pop-in {
+      from { transform: scale(0); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+
+    .briefcase-wrap { position: relative; }
+    .note-briefcase {
+      background: none; border: none; cursor: pointer; padding: 2px 3px;
+      color: rgba(0,0,0,0.35); line-height: 0; border-radius: 4px;
+      transition: background 0.15s, color 0.15s; flex-shrink: 0;
+    }
+    .note-briefcase:hover { background: rgba(0,0,0,0.08); color: rgba(0,0,0,0.7); }
+
+    .briefcase-dropdown {
+      display: none; position: absolute; bottom: calc(100% + 6px); left: 0;
+      background: #fff; border-radius: 8px; padding: 6px 4px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.18); z-index: 20; white-space: nowrap;
+    }
+    .briefcase-dropdown.open { display: block; }
+    .briefcase-menu-item {
+      padding: 6px 10px; font-size: 11px; color: #334155; cursor: pointer;
+      border-radius: 5px; font-family: inherit;
+      transition: background 0.12s;
+    }
+    .briefcase-menu-item:hover { background: #f1f5f9; }
+
+    .note-content {
+      flex: 1; word-break: break-word; min-height: 72px;
+      cursor: default; font-size: 13px; line-height: 1.5;
+      color: #1e293b; white-space: pre-wrap;
+    }
+    .note-content.empty { color: rgba(0,0,0,0.28); font-style: italic; }
+
+    .note-textarea {
+      flex: 1; background: transparent; border: none;
+      border-bottom: 1px solid rgba(0,0,0,0.12);
+      resize: none; font-size: 13px; font-family: inherit;
+      outline: none; min-height: 72px; color: #1e293b;
+      line-height: 1.5; width: 100%;
+    }
+
+    .note-author {
+      font-size: 10px; color: rgba(0,0,0,0.35); font-style: italic;
+      line-height: 1.3; margin-top: -2px;
+    }
+
+    .note-footer {
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .note-footer.hidden { display: none; }
+
+    .color-wrap { position: relative; }
+    .color-toggle {
+      background: none; border: none; cursor: pointer;
+      padding: 2px 3px; line-height: 0;
+      color: rgba(0,0,0,0.4); border-radius: 4px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .color-toggle:hover { background: rgba(0,0,0,0.08); color: rgba(0,0,0,0.7); }
+
+    .color-dropdown {
+      display: none; position: absolute; bottom: calc(100% + 6px); left: 0;
+      background: #fff; border-radius: 8px; padding: 8px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+      flex-wrap: wrap; gap: 6px; width: 96px; z-index: 20;
+    }
+    .color-dropdown.open { display: flex; }
+
+    .color-dot {
+      width: 16px; height: 16px; border-radius: 50%;
+      cursor: pointer; flex-shrink: 0;
+      border: 1.5px solid rgba(0,0,0,0.1); transition: transform 0.1s;
+    }
+    .color-dot:hover { transform: scale(1.25); }
+    .color-dot.active { border: 2px solid rgba(0,0,0,0.5); }
+
+    .delete-btn {
+      background: none; border: none; cursor: pointer;
+      font-size: 18px; color: rgba(0,0,0,0.25); padding: 0 2px;
+      line-height: 1; font-family: inherit;
+    }
+    .delete-btn:hover { color: rgba(0,0,0,0.65); }
+
+    /* Confirm popup */
+    #confirm-popup {
+      position: fixed; inset: 0; z-index: 500;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.25);
+      backdrop-filter: blur(2px);
+    }
+    #confirm-popup.hidden { display: none; }
+    .confirm-box {
+      background: #fff; border-radius: 12px;
+      padding: 24px 28px; width: 260px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+      display: flex; flex-direction: column; gap: 16px;
+      animation: pop-in 0.18s cubic-bezier(0.175,0.885,0.32,1.275);
+    }
+    .confirm-box p {
+      font-size: 14px; color: #1e293b; font-weight: 600; text-align: center;
+    }
+    .confirm-box small {
+      display: block; font-size: 11px; color: #94a3b8;
+      text-align: center; margin-top: -10px;
+    }
+    .confirm-actions {
+      display: flex; gap: 8px;
+    }
+    .confirm-cancel {
+      flex: 1; padding: 8px; border-radius: 8px;
+      background: #f1f5f9; border: none; cursor: pointer;
+      font-size: 13px; font-weight: 600; color: #64748b;
+      font-family: inherit; transition: background 0.15s;
+    }
+    .confirm-cancel:hover { background: #e2e8f0; }
+    .confirm-delete {
+      flex: 1; padding: 8px; border-radius: 8px;
+      background: #ef4444; border: none; cursor: pointer;
+      font-size: 13px; font-weight: 600; color: #fff;
+      font-family: inherit; transition: background 0.15s;
+    }
+    .confirm-delete:hover { background: #dc2626; }
+
+    /* ── Done folder ─────────────────────────────────────────────────────────── */
+    #done-folder-wrap {
+      display: inline-flex; position: relative;
+    }
+    #done-folder-wrap.hidden { display: none; }
+    #done-folder-btn {
+      background: none; border: none; cursor: pointer;
+      padding: 0; line-height: 0;
+      transition: transform 0.15s, filter 0.15s;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.15));
+    }
+    #done-folder-btn:hover { transform: scale(1.08); filter: drop-shadow(0 4px 10px rgba(0,0,0,0.2)); }
+    #done-folder-btn.drop-ready {
+      transform: scale(1.2);
+      filter: drop-shadow(0 4px 14px rgba(22,163,74,0.5));
+    }
+    .done-badge {
+      position: absolute; top: -4px; right: -4px;
+      min-width: 18px; height: 18px; border-radius: 9px;
+      background: #ef4444; color: #fff;
+      font-size: 10px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      padding: 0 4px; border: 2px solid #f8fafc;
+      animation: pop-in 0.2s cubic-bezier(0.175,0.885,0.32,1.275);
+    }
+    .done-badge.hidden { display: none; }
+
+    /* ── Done modal ──────────────────────────────────────────────────────────── */
+    #done-modal {
+      position: fixed; inset: 0; z-index: 500;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.3); backdrop-filter: blur(3px);
+    }
+    #done-modal.hidden { display: none; }
+    .done-modal-box {
+      background: #f8fafc; border-radius: 16px;
+      width: min(760px, 92vw); max-height: 80vh;
+      display: flex; flex-direction: column;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.2);
+      animation: pop-in 0.2s cubic-bezier(0.175,0.885,0.32,1.275);
+      overflow: hidden;
+    }
+    .done-modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 24px 14px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .done-modal-title {
+      font-size: 14px; font-weight: 700; color: #1e293b;
+      display: flex; align-items: center; gap: 8px; letter-spacing: 0.3px;
+    }
+    .done-modal-count {
+      font-size: 11px; font-weight: 600; color: #fff;
+      background: #64748b; border-radius: 10px;
+      padding: 2px 7px;
+    }
+    .done-modal-close {
+      background: none; border: none; cursor: pointer;
+      font-size: 20px; color: #94a3b8; line-height: 1;
+      padding: 2px 6px; border-radius: 6px; font-family: inherit;
+    }
+    .done-modal-close:hover { background: #e2e8f0; color: #1e293b; }
+    .done-modal-body {
+      overflow-y: auto; padding: 20px 24px;
+    }
+    .done-modal-empty {
+      text-align: center; color: #94a3b8; font-size: 13px;
+      padding: 40px 0; font-style: italic;
+    }
+    .done-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 14px;
+    }
+    .done-card {
+      border-radius: 8px; padding: 10px 12px 10px;
+      box-shadow: 1px 2px 10px rgba(0,0,0,0.1);
+      display: flex; flex-direction: column; gap: 6px;
+      min-height: 100px; position: relative;
+    }
+    .done-card-content {
+      font-size: 12px; line-height: 1.5; color: #1e293b;
+      word-break: break-word; flex: 1;
+      display: -webkit-box; -webkit-line-clamp: 5;
+      -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .done-card-content.empty { color: rgba(0,0,0,0.3); font-style: italic; }
+    .done-card-author { font-size: 10px; color: rgba(0,0,0,0.4); font-style: italic; }
+    .done-card-actions { display: flex; gap: 5px; align-self: stretch; margin-top: 2px; }
+    .done-card-restore {
+      flex: 1; background: rgba(0,0,0,0.08); border: none;
+      border-radius: 5px; padding: 4px 6px; font-size: 10px;
+      font-weight: 600; cursor: pointer; color: #334155;
+      font-family: inherit; transition: background 0.15s;
+    }
+    .done-card-restore:hover { background: rgba(0,0,0,0.16); }
+    .done-card-delete {
+      background: rgba(239,68,68,0.12); border: none;
+      border-radius: 5px; padding: 4px 7px; font-size: 13px;
+      cursor: pointer; color: #ef4444; line-height: 1;
+      font-family: inherit; transition: background 0.15s;
+    }
+    .done-card-delete:hover { background: rgba(239,68,68,0.25); }
+
+    /* ── Add button ─────────────────────────────────────────────────────────── */
+    #add-btn {
+      position: fixed; bottom: 28px; left: 28px;
+      width: 56px; height: 56px; border-radius: 50%;
+      background: #3b82f6; color: #fff; border: none;
+      font-size: 30px; cursor: pointer;
+      box-shadow: 0 4px 20px rgba(59,130,246,0.45);
+      z-index: 100; display: flex; align-items: center; justify-content: center;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    #add-btn:hover { transform: scale(1.1); box-shadow: 0 6px 28px rgba(59,130,246,0.6); }
+    #add-btn.hidden { display: none; }
+
+    /* ── Loading / error overlay ────────────────────────────────────────────── */
+    #overlay {
+      position: fixed; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      font-family: inherit; z-index: 200; background: #f8fafc;
+    }
+    #overlay.hidden { display: none; }
+    #overlay .msg { font-size: 14px; letter-spacing: 2px; color: #94a3b8; }
+    #overlay .err { font-size: 16px; font-weight: 700; color: #ef4444; }
+    #overlay .sub { font-size: 13px; color: #94a3b8; margin-top: 8px; }
+  </style>
+</head>
+<body>
+
+<!-- ── Small screen warning ──────────────────────────────────────────────── -->
+<div id="small-screen-warning">
+  <div class="warn-icon">🖥️</div>
+  <div class="warn-title">Desktop Only</div>
+  <div class="warn-sub">This app requires a large screen to use.<br>Please open it on a desktop or laptop.</div>
+</div>
+
+<!-- ── Board picker ──────────────────────────────────────────────────────── -->
+<div id="board-picker-screen">
+  <div class="board-picker-title">Select Board</div>
+  <div class="board-picker-cards">
+    <button class="board-card" data-board="tamawal">Tamawal</button>
+    <button class="board-card" data-board="hyperfantasy">Hyperfantasy</button>
+  </div>
+  <div id="board-pw-section" class="hidden">
+    <div class="board-pw-label">Hyperfantasy — Enter Password</div>
+    <input class="board-pw-input" id="board-pw-input" type="password" placeholder="Password" />
+    <div class="board-pw-err" id="board-pw-err"></div>
+    <button class="board-pw-btn" id="board-pw-btn">Enter</button>
+    <button class="back-btn" id="board-pw-back">← Back</button>
+  </div>
+</div>
+
+<!-- ── Login screen ──────────────────────────────────────────────────────── -->
+<div id="login-screen" class="hidden">
+  <div class="login-title">Login as...</div>
+  <div class="login-users">
+
+    <div class="login-user" id="user-sholahudin">
+      <div class="login-avatar" style="background:#3b82f6" data-user="Sholahuddin" data-password="saladin">SH</div>
+      <div class="login-name">Sholahuddin</div>
+      <div class="login-pw-wrap hidden">
+        <input class="login-pw-input" type="password" placeholder="Password" />
+        <button class="login-pw-btn">Enter</button>
+        <div class="login-pw-err"></div>
+      </div>
+    </div>
+
+    <div class="login-user" id="user-sulaiman">
+      <div class="login-avatar" style="background:#8b5cf6" data-user="Sulaiman" data-password="soliman">SL</div>
+      <div class="login-name">Sulaiman</div>
+      <div class="login-pw-wrap hidden">
+        <input class="login-pw-input" type="password" placeholder="Password" />
+        <button class="login-pw-btn">Enter</button>
+        <div class="login-pw-err"></div>
+      </div>
+    </div>
+
+    <div class="login-user" id="user-guest">
+      <div class="login-avatar" style="background:#94a3b8" data-user="Guest">GU</div>
+      <div class="login-name">Guest</div>
+    </div>
+
+  </div>
+  <button class="back-btn" id="login-back-btn">← Back</button>
+</div>
+
+<!-- ── Loading / error overlay ───────────────────────────────────────────── -->
+<div id="overlay" class="hidden">
+  <div class="msg">LOADING...</div>
+</div>
+
+<!-- ── Session bar ───────────────────────────────────────────────────────── -->
+<div id="session-bar" class="hidden">
+  <div id="done-folder-wrap" class="hidden">
+    <button id="done-folder-btn" title="Done folder">
+      <img src="https://icons.iconarchive.com/icons/dtafalonso/yosemite-flat/256/Folder-icon.png" width="52" height="52" alt="Done folder" draggable="false" />
+    </button>
+    <span id="done-badge" class="done-badge hidden">0</span>
+  </div>
+  <span class="session-name" id="session-name-label"></span>
+  <button class="logout-btn" id="logout-btn">Logout</button>
+</div>
+
+<!-- ── Done modal ────────────────────────────────────────────────────────── -->
+<div id="done-modal" class="hidden">
+  <div class="done-modal-box">
+    <div class="done-modal-header">
+      <div class="done-modal-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h3.172a2 2 0 0 1 1.414.586l1.828 1.828A2 2 0 0 0 12.828 8H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/><path d="m9 13 2 2 4-4"/></svg>
+        Done
+        <span class="done-modal-count" id="done-modal-count">0</span>
+      </div>
+      <button class="done-modal-close" id="done-modal-close">×</button>
+    </div>
+    <div class="done-modal-body">
+      <div id="done-grid-container"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Board canvas ──────────────────────────────────────────────────────── -->
+<div id="canvas">
+  <div class="quadrant" style="top:0;left:0;background:#fff1f2;align-items:flex-start;justify-content:flex-start;">
+    <div><div class="q-label-id" style="color:#e11d48">Q1</div>
+    <div class="q-label-name" style="color:#e11d48">Do</div>
+    <div class="q-label-desc" style="color:#e11d48">Important · Urgent</div></div>
+  </div>
+  <div class="quadrant" style="top:0;left:50%;background:#f0fdf4;align-items:flex-start;justify-content:flex-end;">
+    <div><div class="q-label-id" style="color:#16a34a">Q2</div>
+    <div class="q-label-name" style="color:#16a34a">Schedule</div>
+    <div class="q-label-desc" style="color:#16a34a">Important · Not Urgent</div></div>
+  </div>
+  <div class="quadrant" style="top:50%;left:0;background:#fefce8;align-items:flex-end;justify-content:flex-start;">
+    <div><div class="q-label-id" style="color:#ca8a04">Q3</div>
+    <div class="q-label-name" style="color:#ca8a04">Delegate</div>
+    <div class="q-label-desc" style="color:#ca8a04">Not Important · Urgent</div></div>
+  </div>
+  <div class="quadrant" style="top:50%;left:50%;background:#f8fafc;align-items:flex-end;justify-content:flex-end;">
+    <div><div class="q-label-id" style="color:#64748b">Q4</div>
+    <div class="q-label-name" style="color:#64748b">Eliminate</div>
+    <div class="q-label-desc" style="color:#64748b">Not Important · Not Urgent</div></div>
+  </div>
+  <div class="divider-h"></div>
+  <div class="divider-v"></div>
+  <div id="axis-x">← Urgent · Not Urgent →</div>
+  <div id="axis-y">↑ Important · Not Important ↓</div>
+  <div id="title">Priority Matrix</div>
+</div>
+
+<button id="add-btn" class="hidden" title="Add note">+</button>
+
+<div id="confirm-popup" class="hidden">
+  <div class="confirm-box">
+    <p>Delete this note?</p>
+    <small>This cannot be undone.</small>
+    <div class="confirm-actions">
+      <button class="confirm-cancel">Cancel</button>
+      <button class="confirm-delete">Delete</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+  const SUPABASE_URL = 'https://vnqyzthjviyljhplvzay.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZucXl6dGhqdml5bGpocGx2emF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNTU4MzEsImV4cCI6MjA4OTkzMTgzMX0.hu9HWGs-I4P2EmlMGp-2fffWUfHx9n9SZj1bsQnE7Y8';
+  let   BOARD_ID     = 'default';
+  const TABLE        = 'Note';
+
+  const BOARDS = {
+    tamawal:      { id: 'default',      label: 'Tamawal',      requireLogin: true },
+    hyperfantasy: { id: 'hyperfantasy', label: 'Hyperfantasy', requireLogin: false, defaultUser: 'Sholahuddin' },
+  };
+
+  const COLORS = {
+    yellow: '#fef08a', pink: '#fda4af', blue: '#93c5fd',
+    green: '#86efac', purple: '#d8b4fe', orange: '#fdba74',
+  };
+
+  const USER_META = {
+    Sholahuddin: { initials: 'SH', color: '#3b82f6', photo: 'https://ca.slack-edge.com/TLE0MEZFE-U03JAM3DZL5-8978d46dbc43-512' },
+    Sulaiman:    { initials: 'SL', color: '#8b5cf6', photo: 'https://ca.slack-edge.com/TLE0MEZFE-U087ZJUED5W-cea1bdbada74-512' },
+    Guest:       { initials: 'GU', color: '#94a3b8', photo: null },
+    Eko:          { initials: 'EK', color: '#8b5cf6', photo: 'https://executive.co.id/cdn/shop/articles/Tampil_Beda_dengan_7_Model_Rambut_Panjang_Pria_yang_Maskulin_dan_Stylish_1200x.jpg?v=1747632454' },
+    Aidi:         { initials: 'AD', color: '#8b5cf6', photo: 'https://p2.piqsels.com/preview/588/820/979/adult-blur-business-close-up-thumbnail.jpg' },
+    Rofi:         { initials: 'RF', color: '#8b5cf6', photo: 'https://lozy.id/cdn/shop/products/hazelnut1_600x.jpg?v=1654586514' },
+    Anna:         { initials: 'AN', color: '#8b5cf6', photo: 'https://i.ytimg.com/vi/TOi2WNS19g0/hq720.jpg?sqp=-oaymwEYCJUDENAFSFryq4qpAwoIARUAAIhC0AEB&rs=AOn4CLBAa781urSCBTlGsSmw5PW9vwxAXQ' },
+    Dita:         { initials: 'DT', color: '#8b5cf6', photo: 'https://img.lazcdn.com/g/p/26c14daf2a5c4796531f50136b2a02d2.jpg_720x720q80.jpg' },
+  };
+
+  let workingOnEl = null;
+  let doneNotes   = [];
+
+  const doneFolderBtn  = document.getElementById('done-folder-btn');
+  const doneBadge      = document.getElementById('done-badge');
+  const doneModal      = document.getElementById('done-modal');
+  const doneGridContainer = document.getElementById('done-grid-container');
+  const doneModalCount = document.getElementById('done-modal-count');
+
+  function updateBadge() {
+    doneBadge.textContent = doneNotes.length;
+    doneBadge.classList.toggle('hidden', doneNotes.length === 0);
+    doneModalCount.textContent = doneNotes.length;
+  }
+
+  doneFolderBtn.addEventListener('click', openDoneModal);
+  document.getElementById('done-modal-close').addEventListener('click', () => doneModal.classList.add('hidden'));
+  doneModal.addEventListener('click', e => { if (e.target === doneModal) doneModal.classList.add('hidden'); });
+
+  function openDoneModal() {
+    doneGridContainer.innerHTML = doneNotes.length === 0
+      ? `<div class="done-modal-empty">No done cards yet — drag a note onto the folder.</div>`
+      : `<div class="done-grid">${doneNotes.map(n => doneCardHTML(n)).join('')}</div>`;
+    doneModal.classList.remove('hidden');
+    doneGridContainer.querySelectorAll('.done-card-restore').forEach(btn => {
+      btn.addEventListener('click', async () => { await restoreNote(btn.dataset.id); });
+    });
+    doneGridContainer.querySelectorAll('.done-card-delete').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.id;
+        pendingDelete = { id, el: null, isDoneCard: true };
+        confirmPopup.classList.remove('hidden');
+        confirmDelete.focus();
+      });
+    });
+  }
+
+  function doneCardHTML(note) {
+    const bg = COLORS[note.color] || COLORS.yellow;
+    const contentClass = note.content ? 'done-card-content' : 'done-card-content empty';
+    const contentText  = note.content ? escHtml(note.content) : 'Empty note';
+    const author = note.createdBy ? `<div class="done-card-author">by ${escHtml(note.createdBy)}</div>` : '';
+    return `
+      <div class="done-card" style="background:${bg}">
+        <div class="${contentClass}">${contentText}</div>
+        ${author}
+        <div class="done-card-actions">
+          <button class="done-card-restore" data-id="${note.id}">Restore</button>
+          <button class="done-card-delete" data-id="${note.id}" title="Delete">×</button>
+        </div>
+      </div>`;
+  }
+
+  async function markAsDone(note, el) {
+    await supabase.from(TABLE).update({ done: true, workingOnBy: null, updatedAt: new Date().toISOString() }).eq('id', note.id);
+    doneNotes.push(note);
+    updateBadge();
+    if (workingOnEl === el) workingOnEl = null;
+    noteRegistry.delete(note.id);
+    el.remove();
+  }
+
+  async function restoreNote(id) {
+    await supabase.from(TABLE).update({ done: false, updatedAt: new Date().toISOString() }).eq('id', id);
+    const idx = doneNotes.findIndex(n => n.id === id);
+    if (idx !== -1) {
+      const note = doneNotes.splice(idx, 1)[0];
+      note.done = false;
+      updateBadge();
+      renderNote(note);
+    }
+    openDoneModal(); // re-render modal
+  }
+
+  // ── Confirm popup ─────────────────────────────────────────────────────────
+  const confirmPopup  = document.getElementById('confirm-popup');
+  const confirmCancel = confirmPopup.querySelector('.confirm-cancel');
+  const confirmDelete = confirmPopup.querySelector('.confirm-delete');
+  let pendingDelete = null; // { id, el }
+
+  function askConfirmDelete(id, el) {
+    pendingDelete = { id, el };
+    confirmPopup.classList.remove('hidden');
+    confirmDelete.focus();
+  }
+
+  confirmCancel.addEventListener('click', () => {
+    confirmPopup.classList.add('hidden');
+    pendingDelete = null;
+  });
+  confirmDelete.addEventListener('click', async () => {
+    if (!pendingDelete) return;
+    const { id, el, isDoneCard } = pendingDelete;
+    confirmPopup.classList.add('hidden');
+    pendingDelete = null;
+    await deleteNote(id);
+    if (isDoneCard) {
+      doneNotes = doneNotes.filter(n => n.id !== id);
+      updateBadge();
+      openDoneModal();
+    } else {
+      noteRegistry.delete(id);
+      if (workingOnEl === el) workingOnEl = null;
+      el.remove();
+    }
+  });
+  confirmPopup.addEventListener('click', e => {
+    if (e.target === confirmPopup) {
+      confirmPopup.classList.add('hidden');
+      pendingDelete = null;
+    }
+  });
+
+  const supabase         = createClient(SUPABASE_URL, SUPABASE_KEY);
+  const canvas           = document.getElementById('canvas');
+  const overlay          = document.getElementById('overlay');
+  const addBtn           = document.getElementById('add-btn');
+  const sessionBar       = document.getElementById('session-bar');
+  const sessionLabel     = document.getElementById('session-name-label');
+  const loginScreen      = document.getElementById('login-screen');
+  const boardPickerScreen= document.getElementById('board-picker-screen');
+
+  // ── Board picker ──────────────────────────────────────────────────────────
+
+  const boardCards    = document.querySelector('.board-picker-cards');
+  const boardPwSection= document.getElementById('board-pw-section');
+  const boardPwInput  = document.getElementById('board-pw-input');
+  const boardPwErr    = document.getElementById('board-pw-err');
+  const boardPwBtn    = document.getElementById('board-pw-btn');
+  const boardPwBack   = document.getElementById('board-pw-back');
+
+  function showBoardPicker() {
+    boardPickerScreen.classList.remove('hidden');
+    loginScreen.classList.add('hidden');
+    boardCards.style.display = '';
+    boardPwSection.classList.add('hidden');
+    boardPwInput.value = '';
+    boardPwErr.textContent = '';
+    boardPwInput.classList.remove('error');
+    document.querySelectorAll('.login-avatar').forEach(a => a.classList.remove('selected'));
+    document.querySelectorAll('.login-pw-wrap').forEach(w => w.classList.add('hidden'));
+  }
+
+  function selectBoard(key) {
+    const board = BOARDS[key];
+    BOARD_ID = board.id;
+    document.getElementById('title').textContent = board.label;
+
+    if (key === 'hyperfantasy') {
+      // Show password prompt inside board picker
+      boardCards.style.display = 'none';
+      boardPwSection.classList.remove('hidden');
+      boardPwInput.value = '';
+      boardPwErr.textContent = '';
+      boardPwInput.classList.remove('error');
+      boardPwInput.focus();
+
+      const attempt = () => {
+        if (boardPwInput.value === 'creative') {
+          localStorage.setItem('pm_board', key);
+          boardPickerScreen.classList.add('hidden');
+          startSession(board.defaultUser);
+        } else {
+          boardPwInput.classList.add('error');
+          boardPwErr.textContent = 'Wrong password';
+          boardPwInput.value = '';
+          boardPwInput.focus();
+        }
+      };
+      boardPwBtn.onclick = attempt;
+      boardPwInput.onkeydown = e => { if (e.key === 'Enter') attempt(); };
+      return;
+    }
+
+    localStorage.setItem('pm_board', key);
+    boardPickerScreen.classList.add('hidden');
+    loginScreen.classList.remove('hidden');
+  }
+
+  boardPwBack.addEventListener('click', showBoardPicker);
+
+  document.querySelectorAll('.board-card').forEach(card => {
+    card.addEventListener('click', () => selectBoard(card.dataset.board));
+  });
+
+  document.getElementById('login-back-btn').addEventListener('click', showBoardPicker);
+
+  // ── Session ──────────────────────────────────────────────────────────────
+
+  let session = null; // { name: 'Sholahuddin' } | { name: 'Guest' }
+
+  function isGuest() { return session?.name === 'Guest'; }
+
+  function startSession(name) {
+    session = { name };
+    localStorage.setItem('pm_session', JSON.stringify(session));
+    loginScreen.classList.add('hidden');
+    boardPickerScreen.classList.add('hidden');
+    sessionLabel.textContent = name;
+    sessionBar.classList.remove('hidden');
+    document.getElementById('done-folder-wrap').classList.remove('hidden');
+    if (!isGuest()) addBtn.classList.remove('hidden');
+    overlay.classList.remove('hidden');
+    loadNotes();
+  }
+
+  document.getElementById('logout-btn').addEventListener('click', () => {
+    localStorage.removeItem('pm_session');
+    localStorage.removeItem('pm_board');
+    location.reload();
+  });
+
+  // ── Login screen logic ────────────────────────────────────────────────────
+
+  document.querySelectorAll('.login-avatar').forEach(avatar => {
+    avatar.addEventListener('click', () => {
+      const user     = avatar.dataset.user;
+      const password = avatar.dataset.password;
+
+      if (!password) { startSession(user); return; }
+
+      // Deselect all, select this one
+      document.querySelectorAll('.login-avatar').forEach(a => a.classList.remove('selected'));
+      document.querySelectorAll('.login-pw-wrap').forEach(w => w.classList.add('hidden'));
+      avatar.classList.add('selected');
+
+      const wrap  = avatar.closest('.login-user').querySelector('.login-pw-wrap');
+      const input = wrap.querySelector('.login-pw-input');
+      const err   = wrap.querySelector('.login-pw-err');
+      wrap.classList.remove('hidden');
+      input.value = '';
+      err.textContent = '';
+      input.classList.remove('error');
+      input.focus();
+
+      const attempt = () => {
+        if (input.value === password) {
+          startSession(user);
+        } else {
+          input.classList.add('error');
+          err.textContent = 'Wrong password';
+          input.value = '';
+          input.focus();
+        }
+      };
+
+      wrap.querySelector('.login-pw-btn').onclick = attempt;
+      input.onkeydown = e => { if (e.key === 'Enter') attempt(); };
+    });
+  });
+
+  // ── Coordinate helpers ────────────────────────────────────────────────────
+
+  const noteRegistry = new Map();
+
+  const fracToPx = (xf, yf) => ({ px: xf * canvas.clientWidth, py: yf * canvas.clientHeight });
+  const pxToFrac = (px, py) => ({ x: px / canvas.clientWidth, y: py / canvas.clientHeight });
+
+  window.addEventListener('resize', () => {
+    noteRegistry.forEach(({ el, note }) => {
+      const { px, py } = fracToPx(note.x, note.y);
+      el.style.left = px + 'px';
+      el.style.top  = py + 'px';
+    });
+  });
+
+  // ── CRUD ──────────────────────────────────────────────────────────────────
+
+  async function ensureBoard() {
+    const now = new Date().toISOString();
+    await supabase.from('Board').upsert(
+      { id: BOARD_ID, name: 'Default Board', createdAt: now, updatedAt: now },
+      { onConflict: 'id', ignoreDuplicates: true }
+    );
+  }
+
+  async function loadNotes() {
+    await ensureBoard();
+    const { data, error } = await supabase
+      .from(TABLE).select('*')
+      .eq('boardId', BOARD_ID)
+      .order('createdAt', { ascending: true });
+    if (error) { showError(error.message); return; }
+    overlay.classList.add('hidden');
+    doneNotes = data.filter(n => n.done);
+    updateBadge();
+    data.filter(n => !n.done).forEach(renderNote);
+  }
+
+  async function createNote(px, py) {
+    const { x, y } = pxToFrac(px, py);
+    const base = {
+      id: crypto.randomUUID(), boardId: BOARD_ID,
+      content: '', x, y, color: 'yellow',
+      updatedAt: new Date().toISOString(),
+    };
+
+    // Try with createdBy; if column doesn't exist yet, fall back without it
+    let { data, error } = await supabase.from(TABLE)
+      .insert({ ...base, createdBy: session.name }).select().single();
+    if (error && error.message.includes('createdBy')) {
+      ({ data, error } = await supabase.from(TABLE).insert(base).select().single());
+    }
+    if (error) { console.error(error); return; }
+    renderNote(data);
+  }
+
+  async function updateNote(id, fields) {
+    const { error } = await supabase
+      .from(TABLE).update({ ...fields, updatedAt: new Date().toISOString() }).eq('id', id);
+    if (error) console.error(error);
+  }
+
+  async function deleteNote(id) {
+    const { error } = await supabase.from(TABLE).delete().eq('id', id);
+    if (error) console.error(error);
+  }
+
+  // ── Render ────────────────────────────────────────────────────────────────
+
+  function showError(msg) {
+    overlay.classList.remove('hidden');
+    overlay.innerHTML = `<div class="err">Cannot connect to Supabase</div><div class="sub">${msg}</div>`;
+  }
+
+  function renderNote(note) {
+    const el = document.createElement('div');
+    el.className = 'note';
+    el.dataset.id = note.id;
+    const { px, py } = fracToPx(note.x, note.y);
+    el.style.left = px + 'px';
+    el.style.top  = py + 'px';
+    el.style.backgroundColor = COLORS[note.color] || COLORS.yellow;
+    el.innerHTML = noteHTML(note);
+    canvas.appendChild(el);
+    noteRegistry.set(note.id, { el, note });
+    if (note.workingOnBy) {
+      applyWorkingAvatar(el, note.workingOnBy);
+      if (note.workingOnBy === session?.name) workingOnEl = el;
+    }
+    bindNote(el, note);
+  }
+
+  function noteHTML(note) {
+    const colorDots = Object.entries(COLORS).map(([name, val]) =>
+      `<div class="color-dot${note.color === name ? ' active' : ''}" data-color="${name}" style="background:${val}" title="${name}"></div>`
+    ).join('');
+    const authorLine = note.createdBy
+      ? `<div class="note-author">by ${escHtml(note.createdBy)}</div>` : '';
+    const footerClass = isGuest() ? 'note-footer hidden' : 'note-footer';
+    return `
+      <div class="note-header">· · ·</div>
+      <div class="note-content${note.content ? '' : ' empty'}">${note.content ? escHtml(note.content) : 'Double-click to edit'}</div>
+      ${authorLine}
+      <div class="${footerClass}">
+        <div class="note-left-icons">
+          <div class="briefcase-wrap">
+            <button class="note-briefcase" title="Options"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M2 13h20"/></svg></button>
+            <div class="briefcase-dropdown">
+              <div class="briefcase-menu-item" data-action="working-on">Set as working on this</div>
+            </div>
+          </div>
+          <div class="color-wrap">
+            <button class="color-toggle" title="Change color"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg></button>
+            <div class="color-dropdown">${colorDots}</div>
+          </div>
+        </div>
+        <button class="delete-btn" title="Delete">×</button>
+      </div>`;
+  }
+
+  function escHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function applyWorkingAvatar(el, username) {
+    const meta = USER_META[username] || { initials: username.slice(0,2).toUpperCase(), color: '#94a3b8', photo: null };
+    const avatar = document.createElement('div');
+    avatar.className = 'working-avatar';
+
+    const ns = 'http://www.w3.org/2000/svg';
+    const ring = document.createElementNS(ns, 'svg');
+    ring.setAttribute('class', 'cookie-ring');
+    ring.setAttribute('viewBox', '-2 -2 80 80');
+    ring.setAttribute('fill', 'none');
+    // 16-bump smooth cookie: quadratic bezier through alternating peaks/valleys
+    const cookiePath = document.createElementNS(ns, 'path');
+    const cx = 38, cy = 38, outerR = 34, innerR = 27, n = 16;
+    const valleyStart = { x: cx + innerR * Math.cos(-Math.PI/2 + Math.PI/n), y: cy + innerR * Math.sin(-Math.PI/2 + Math.PI/n) };
+    let d = `M${valleyStart.x.toFixed(2)},${valleyStart.y.toFixed(2)}`;
+    for (let i = 0; i < n; i++) {
+      const peakAngle = -Math.PI/2 + (i * 2 * Math.PI / n);
+      const nextValleyAngle = -Math.PI/2 + ((i + 1.5) * 2 * Math.PI / n);
+      const px = cx + outerR * Math.cos(peakAngle), py = cy + outerR * Math.sin(peakAngle);
+      const vx = cx + innerR * Math.cos(nextValleyAngle), vy = cy + innerR * Math.sin(nextValleyAngle);
+      d += ` Q${px.toFixed(2)},${py.toFixed(2)} ${vx.toFixed(2)},${vy.toFixed(2)}`;
+    }
+    d += ' Z';
+    cookiePath.setAttribute('d', d);
+    cookiePath.setAttribute('stroke', '#3b82f6');
+    cookiePath.setAttribute('stroke-width', '2');
+    cookiePath.setAttribute('fill', 'none');
+    ring.appendChild(cookiePath);
+    avatar.appendChild(ring);
+
+    if (meta.photo) {
+      const img = document.createElement('img');
+      img.src = meta.photo;
+      img.alt = username;
+      avatar.appendChild(img);
+    } else {
+      const initials = document.createElement('div');
+      initials.className = 'avatar-initials';
+      initials.style.background = meta.color;
+      initials.textContent = meta.initials;
+      avatar.appendChild(initials);
+    }
+    el.appendChild(avatar);
+    const b = el.querySelector('.note-briefcase');
+    if (b) b.style.display = 'none';
+  }
+
+  function clearWorkingAvatar(el) {
+    el.querySelector('.working-avatar')?.remove();
+    const b = el.querySelector('.note-briefcase');
+    if (b) b.style.display = '';
+  }
+
+  async function setWorkingOn(el, note) {
+    const isSame = workingOnEl === el;
+
+    // Clear previous card UI
+    if (workingOnEl && workingOnEl !== el) clearWorkingAvatar(workingOnEl);
+
+    // Clear this user's claim in DB (all their notes on this board)
+    await supabase.from(TABLE)
+      .update({ workingOnBy: null, updatedAt: new Date().toISOString() })
+      .eq('boardId', BOARD_ID)
+      .eq('workingOnBy', session.name);
+
+    if (isSame) {
+      // Deselect: already cleared in DB above
+      clearWorkingAvatar(el);
+      workingOnEl = null;
+      return;
+    }
+
+    // Set new claim in DB
+    await supabase.from(TABLE)
+      .update({ workingOnBy: session.name, updatedAt: new Date().toISOString() })
+      .eq('id', note.id);
+
+    applyWorkingAvatar(el, session.name);
+    workingOnEl = el;
+  }
+
+  function bindNote(el, note) {
+    const header          = el.querySelector('.note-header');
+    const content         = el.querySelector('.note-content');
+    const delBtn          = el.querySelector('.delete-btn');
+    const colorToggle     = el.querySelector('.color-toggle');
+    const dropdown        = el.querySelector('.color-dropdown');
+    const briefcaseBtn    = el.querySelector('.note-briefcase');
+    const briefcaseDrop   = el.querySelector('.briefcase-dropdown');
+
+    // Drag
+    let dragging = false, ox = 0, oy = 0;
+    const isOverFolder = (cx, cy) => {
+      const r = doneFolderBtn.getBoundingClientRect();
+      return cx >= r.left && cx <= r.right && cy >= r.top && cy <= r.bottom;
+    };
+    header.addEventListener('mousedown', e => {
+      dragging = true;
+      ox = e.clientX - el.offsetLeft;
+      oy = e.clientY - el.offsetTop;
+      el.classList.add('dragging');
+      e.preventDefault();
+    });
+    document.addEventListener('mousemove', e => {
+      if (!dragging) return;
+      const x = Math.max(0, Math.min(canvas.clientWidth  - el.offsetWidth,  e.clientX - ox));
+      const y = Math.max(0, Math.min(canvas.clientHeight - el.offsetHeight, e.clientY - oy));
+      el.style.left = x + 'px';
+      el.style.top  = y + 'px';
+      doneFolderBtn.classList.toggle('drop-ready', isOverFolder(e.clientX, e.clientY));
+    });
+    document.addEventListener('mouseup', async e => {
+      if (!dragging) return;
+      dragging = false;
+      el.classList.remove('dragging');
+      doneFolderBtn.classList.remove('drop-ready');
+      if (!isGuest() && isOverFolder(e.clientX, e.clientY)) {
+        await markAsDone(note, el);
+        return;
+      }
+      if (!isGuest()) {
+        const { x, y } = pxToFrac(parseInt(el.style.left), parseInt(el.style.top));
+        note.x = x; note.y = y;
+        updateNote(note.id, { x, y });
+      } else {
+        const { px, py } = fracToPx(note.x, note.y);
+        el.style.left = px + 'px';
+        el.style.top  = py + 'px';
+      }
+    });
+
+    if (isGuest()) return; // no edit controls for guest
+
+    // Briefcase dropdown
+    briefcaseBtn.addEventListener('mousedown', e => e.stopPropagation());
+    briefcaseBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      const isOpen = briefcaseDrop.classList.contains('open');
+      document.querySelectorAll('.briefcase-dropdown.open').forEach(d => d.classList.remove('open'));
+      document.querySelectorAll('.color-dropdown.open').forEach(d => d.classList.remove('open'));
+      if (!isOpen) briefcaseDrop.classList.add('open');
+    });
+    briefcaseDrop.querySelector('[data-action="working-on"]').addEventListener('mousedown', e => e.stopPropagation());
+    briefcaseDrop.querySelector('[data-action="working-on"]').addEventListener('click', e => {
+      e.stopPropagation();
+      briefcaseDrop.classList.remove('open');
+      setWorkingOn(el, note);
+    });
+    document.addEventListener('click', () => briefcaseDrop.classList.remove('open'));
+
+    // Delete
+    delBtn.addEventListener('mousedown', e => e.stopPropagation());
+    delBtn.addEventListener('click', () => askConfirmDelete(note.id, el));
+
+    // Color dropdown
+    colorToggle.addEventListener('mousedown', e => e.stopPropagation());
+    colorToggle.addEventListener('click', e => {
+      e.stopPropagation();
+      const isOpen = dropdown.classList.contains('open');
+      document.querySelectorAll('.color-dropdown.open').forEach(d => d.classList.remove('open'));
+      if (!isOpen) dropdown.classList.add('open');
+    });
+    document.addEventListener('click', () => dropdown.classList.remove('open'));
+    dropdown.querySelectorAll('.color-dot').forEach(dot => {
+      dot.addEventListener('mousedown', e => e.stopPropagation());
+      dot.addEventListener('click', async e => {
+        e.stopPropagation();
+        const color = dot.dataset.color;
+        note.color = color;
+        el.style.backgroundColor = COLORS[color];
+        dropdown.querySelectorAll('.color-dot').forEach(d =>
+          d.classList.toggle('active', d.dataset.color === color)
+        );
+        dropdown.classList.remove('open');
+        await updateNote(note.id, { color });
+      });
+    });
+
+    // Edit
+    content.addEventListener('dblclick', () => {
+      const ta = document.createElement('textarea');
+      ta.className = 'note-textarea';
+      ta.value = note.content; ta.rows = 4;
+      content.replaceWith(ta); ta.focus();
+      ta.addEventListener('mousedown', e => e.stopPropagation());
+      ta.addEventListener('blur', async () => {
+        note.content = ta.value;
+        await updateNote(note.id, { content: note.content });
+        const div = document.createElement('div');
+        div.className = 'note-content' + (note.content ? '' : ' empty');
+        div.textContent = note.content || 'Double-click to edit';
+        ta.replaceWith(div);
+        bindContentEdit(div, note);
+      });
+    });
+  }
+
+  function bindContentEdit(div, note) {
+    div.addEventListener('dblclick', () => {
+      const ta = document.createElement('textarea');
+      ta.className = 'note-textarea';
+      ta.value = note.content; ta.rows = 4;
+      div.replaceWith(ta); ta.focus();
+      ta.addEventListener('mousedown', e => e.stopPropagation());
+      ta.addEventListener('blur', async () => {
+        note.content = ta.value;
+        await updateNote(note.id, { content: note.content });
+        const newDiv = document.createElement('div');
+        newDiv.className = 'note-content' + (note.content ? '' : ' empty');
+        newDiv.textContent = note.content || 'Double-click to edit';
+        ta.replaceWith(newDiv);
+        bindContentEdit(newDiv, note);
+      });
+    });
+  }
+
+  // ── Add button ────────────────────────────────────────────────────────────
+
+  addBtn.addEventListener('click', () => {
+    const x = Math.round(canvas.clientWidth  / 2 - 86);
+    const y = Math.round(canvas.clientHeight / 2 - 72);
+    createNote(x, y);
+  });
+
+  // ── Boot ──────────────────────────────────────────────────────────────────
+
+  const savedBoard   = localStorage.getItem('pm_board');
+  const savedSession = localStorage.getItem('pm_session');
+
+  if (savedBoard && savedSession) {
+    try {
+      const board = BOARDS[savedBoard];
+      if (board) {
+        BOARD_ID = board.id;
+        document.getElementById('title').textContent = board.label;
+      }
+      session = JSON.parse(savedSession);
+      boardPickerScreen.classList.add('hidden');
+      loginScreen.classList.add('hidden');
+      sessionLabel.textContent = session.name;
+      sessionBar.classList.remove('hidden');
+      document.getElementById('done-folder-wrap').classList.remove('hidden');
+      if (!isGuest()) addBtn.classList.remove('hidden');
+      overlay.classList.remove('hidden');
+      loadNotes();
+    } catch {
+      localStorage.removeItem('pm_session');
+      localStorage.removeItem('pm_board');
+      bootFresh();
+    }
+  } else {
+    bootFresh();
+  }
+
+  function bootFresh() {
+    // Skip board picker — always boot into Hyperfantasy board
+    BOARD_ID = BOARDS.hyperfantasy.id;
+    document.getElementById('title').textContent = BOARDS.hyperfantasy.label;
+    localStorage.setItem('pm_board', 'hyperfantasy');
+    boardPickerScreen.classList.add('hidden');
+    loginScreen.classList.remove('hidden');
+  }
+</script>
+</body>
+</html>
